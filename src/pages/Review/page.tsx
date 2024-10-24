@@ -49,7 +49,7 @@ export const ReviewPage = () => {
           <div className="heading2-bold">
             유니버설발레단 〈호두까기 인형〉 - 성남
           </div>
-          <div className="body2-medium text-grayscale-60">리뷰 72개</div>
+          <div className="body2-medium text-grayscale-60">리뷰 184개</div>
         </div>
       </section>
       <section>
