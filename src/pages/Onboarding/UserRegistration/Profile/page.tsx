@@ -63,7 +63,7 @@ export const SelectProfilePage = () => {
                 </TypeButton>
               </div>
             </div>
-            <div className="flex flex-col gap-[0.87em] mb-[3.5rem]">
+            <div className="flex flex-col gap-[0.87em] mb-[56px]">
               <span className="body1-medium text-grayscale-80">연령대</span>
               <div className="grid grid-cols-2 gap-[0.62rem]">
                 <TypeButton

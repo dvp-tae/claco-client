@@ -52,7 +52,7 @@ export const NicknameCreatePage = () => {
 
   return (
     <div className="w-full h-screen bg-background-dark">
-      <div className="flex flex-col w-full h-full justify-between px-[24px] pt-[4.75rem] pb-[4rem]">
+      <div className="flex flex-col w-full h-full justify-between px-[24px] pt-[4.75rem] pb-[4.56rem]">
         <div className="flex-col">
           <BackArrow className="mb-[3.12rem]" onClick={handleBackClick} />
           <span className="heading1-bold text-grayscale-80">

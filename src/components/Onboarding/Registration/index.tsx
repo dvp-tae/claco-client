@@ -23,7 +23,7 @@ export const TypeButton = ({ isChecked, children, className='', ...props }: Butt
 export const ConceptButton = ({ isChecked, children, className='', ...props }: ButtonProps) => {
   return (
     <button
-      className={cn(`items-center justify-center py-[3rem] rounded-[0.31rem] body1-medium ${
+      className={cn(`items-center justify-center py-[2rem] rounded-[0.31rem] body1-medium ${
         isChecked ? 'bg-grayscale-80 text-dark' : 'bg-grayscale-30 text-grayscale-80'
       }`, className
     )}

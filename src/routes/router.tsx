@@ -45,17 +45,16 @@ const routes: RouteObject[] = [
       },
       {
         path: RoutePath.Show,
+        element: <Layout />,
+        children: [{ index: true, element: <ShowDetailPage /> }],
+      },
+      {
+        path: RoutePath.ShowReviews,
         children: [
-          { index: true, element: <ShowDetailPage /> },
+          { index: true, element: <ReviewPage /> },
           {
-            path: RoutePath.ShowReviews,
-            children: [
-              { index: true, element: <ReviewPage /> },
-              {
-                path: RoutePath.ShowReviewDetail,
-                element: <ReviewDetailPage />,
-              },
-            ],
+            path: RoutePath.ShowReviewDetail,
+            element: <ReviewDetailPage />,
           },
         ],
       },

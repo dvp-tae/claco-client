@@ -27,8 +27,8 @@ export const SelectLocationPage = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-background-dark">
-      <div className="flex flex-col w-full h-full px-[24px] pt-[4.75rem] pb-[4.56rem] gap-[0.5rem]">
+    <div className="w-full h-screen overflow-y-auto bg-background-dark flex flex-col">
+      <div className="flex flex-col flex-grow w-full h-auto px-[24px] pt-[4.75rem] pb-[4.56rem] gap-[0.5rem]">
         <div className="flex flex-col gap-[2.44rem]">
           <div className="flex-col">
             <BackArrow className="mb-[1.19rem]" onClick={handleBackClick} />
@@ -45,7 +45,7 @@ export const SelectLocationPage = () => {
             <span className="body1-medium text-grayscale-60">
               선호하는 공연장 위치를 모두 선택해주세요.
             </span>
-            <div className="grid grid-cols-2 gap-[0.63rem]">
+            <div className="grid grid-cols-2 gap-[0.63rem] mb-[166px]">
               <TypeButton
                 isChecked={selectedLocation.includes("서울")}
                 onClick={() => handleLocationClick("서울")}

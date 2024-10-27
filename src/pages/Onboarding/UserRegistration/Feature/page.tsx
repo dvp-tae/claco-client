@@ -47,8 +47,8 @@ export const SelectFeaturePage = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-background-dark">
-      <div className="flex flex-col w-full h-full px-[24px] pt-[4.75rem] pb-[4.56rem] gap-[0.5rem]">
+    <div className="w-full h-screen overflow-y-auto bg-background-dark flex flex-col">
+      <div className="flex flex-col flex-grow w-full h-auto px-[24px] pt-[4.75rem] pb-[4.56rem] gap-[0.5rem]">
         <div className="flex flex-col gap-[2.44rem]">
           <div className="flex-col">
             <BackArrow className="mb-[1.19rem]" onClick={handleBackClick} />
@@ -62,7 +62,7 @@ export const SelectFeaturePage = () => {
         </div>
 
         <div className="flex flex-col justify-between h-full">
-          <div className="flex flex-col gap-[1.56rem]">
+          <div className="flex flex-col gap-[1.56rem] mb-[107px]">
             <span className="body1-medium text-grayscale-60">
               선호하는 공연의 특징을 선택해주세요.
             </span>
