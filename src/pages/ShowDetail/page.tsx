@@ -9,6 +9,8 @@ import RelatedShowsSection from "./containers/RelatedShowsSection";
 export const ShowDetailPage = () => {
   const [selectedTab, setSelectedTab] = useState("공연 정보");
   const [isSticky, setIsSticky] = useState(true);
+  const [showFullImage, setShowFullImage] = useState(false);
+
   const tabs = ["공연 정보", "예매자 비율", "상세정보", "감상 리뷰"];
 
   const showInfoRef = useRef<HTMLDivElement>(null);
@@ -25,24 +27,29 @@ export const ShowDetailPage = () => {
       "감상 리뷰": reviewRef,
     };
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const sectionId = entry.target.getAttribute("data-section-id");
-            if (sectionId) {
+    Object.entries(sectionRefs).forEach(([sectionId, ref]) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
               setSelectedTab(sectionId);
             }
-          }
-        });
-      },
-      { threshold: 0.8 },
-    );
+          });
+        },
+        {
+          threshold: sectionId === "상세정보" && showFullImage ? 0.2 : 0.8,
+        },
+      );
 
-    Object.values(sectionRefs).forEach((ref) => {
       if (ref.current) {
         observer.observe(ref.current);
       }
+
+      return () => {
+        if (ref.current) {
+          observer.unobserve(ref.current);
+        }
+      };
     });
 
     const currentRelatedShowsRef = relatedShowsRef.current;
@@ -64,17 +71,11 @@ export const ShowDetailPage = () => {
     }
 
     return () => {
-      Object.values(sectionRefs).forEach((ref) => {
-        if (ref.current) {
-          observer.unobserve(ref.current);
-        }
-      });
-
       if (currentRelatedShowsRef) {
         endObserver.unobserve(currentRelatedShowsRef);
       }
     };
-  }, []);
+  }, [showFullImage]);
 
   const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
     const yOffset = -100;
@@ -132,7 +133,10 @@ export const ShowDetailPage = () => {
         <ReservationRatioSection />
       </div>
       <div ref={detailsInfoRef} data-section-id="상세정보">
-        <DetailsInfoSection />
+        <DetailsInfoSection
+          showFullImage={showFullImage}
+          setShowFullImage={setShowFullImage}
+        />
       </div>
       <div ref={reviewRef} data-section-id="감상 리뷰">
         <ReviewSection />

@@ -51,14 +51,14 @@ export const NicknameCreatePage = () => {
   };
 
   return (
-    <div className="w-full h-screen bg-background-dark">
-      <div className="flex flex-col w-full h-full justify-between px-[24px] pt-[4.75rem] pb-[4.56rem]">
+    <div className="w-full h-screen overflow-y-auto bg-background-dark">
+      <div className="flex flex-col flex-grow w-full h-full justify-between px-[24px] pt-[4.75rem] pb-[4.56rem]">
         <div className="flex-col">
           <BackArrow className="mb-[3.12rem]" onClick={handleBackClick} />
           <span className="heading1-bold text-grayscale-80">
             닉네임을 등록해주세요
           </span>
-          <div className="flex flex-col mt-[1.62rem] gap-[0.81rem]">
+          <div className="flex flex-col mt-[1.62rem] gap-[0.81rem] h-[514px]">
             <div
               className={`flex bg-grayscale-30 justify-between rounded-[0.44rem] p-[1.06rem] border ${
                 hasStartedTyping
