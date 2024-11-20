@@ -1,6 +1,7 @@
 import { ReactComponent as Required } from "@/assets/svgs/required.svg";
 import { ReactComponent as FullStar } from "@/assets/svgs/StarRating.svg";
-import { ReactComponent as HalfStar } from "@/assets/svgs/HalfStarRating.svg";
+import { ReactComponent as HalfStar } from "@/assets/svgs/halfStarRating.svg";
+
 import { StarRatingProps } from "@/types";
 import { ChangeEvent } from "react";
 
@@ -49,7 +50,7 @@ export const StarRating = ({ rating = 0, onRatingChange }: StarRatingProps) => {
                       width={19}
                       height={19}
                       viewBox={"0 0 11 19"}
-                      className="absolute text-secondary2-100/100 top-0 -left-1 z-10"
+                      className="absolute top-0 z-10 text-secondary2-100/100 -left-1"
                     />
                   </div>
                 ) : (
