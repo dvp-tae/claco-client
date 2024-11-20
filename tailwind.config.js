@@ -10,8 +10,12 @@ export default {
       brightness: {
         75: ".75",
       },
+      willChange: {
+        opacity: "opacity",
+      },
       fontFamily: {
         pretendard: ["Pretendard"],
+        Nonchalance: ["Nonchalance"],
       },
       height: {
         "real-screen": "calc(var(--vh) * 100)",

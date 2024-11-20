@@ -2,7 +2,6 @@ import { cn } from "@/lib/utils";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isChecked: boolean;
-  className?: string;
 }
 
 export const ConfirmButton = ({

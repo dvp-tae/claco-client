@@ -1,65 +1,77 @@
-import { ReactComponent as Grand } from "@/assets/svgs/Majestic.svg";
-import { ReactComponent as Romantic } from "@/assets/svgs/Romantic.svg";
-import { ReactComponent as Lyrical } from "@/assets/svgs/Lyrical.svg";
-import { ReactComponent as Fresh } from "@/assets/svgs/Fresh.svg";
-import { ReactComponent as Classical } from "@/assets/svgs/Classical.svg";
-import { GenreProps, GenreType } from "@/types/genre";
+import { cn } from "@/lib/utils";
+import { GenreImageMap, GenreKeyword, GenreProps } from "@/types/genre";
+import { Suspense, useEffect, useState } from "react";
 
-const GENRE: GenreType[] = [
-  { type: "Majestic", content: "웅장한" },
-  { type: "Delicate", content: "섬세한" },
+const GENRE_IMAGE_MAP: GenreImageMap = {
+  웅장한: () => import("@/assets/images/Genre/grand.png"),
+  섬세한: () => import("@/assets/images/Genre/delicate.png"),
+  고전적인: () => import("@/assets/images/Genre/classical.png"),
+  현대적인: () => import("@/assets/images/Genre/modern.png"),
+  서정적인: () => import("@/assets/images/Genre/lyrical.png"),
+  역동적인: () => import("@/assets/images/Genre/dynamic.png"),
+  낭만적인: () => import("@/assets/images/Genre/romantic.png"),
+  비극적인: () => import("@/assets/images/Genre/tragic.png"),
+  친숙한: () => import("@/assets/images/Genre/familiar.png"),
+  새로운: () => import("@/assets/images/Genre/novel.png"),
+};
 
-  { type: "Classical", content: "고전적인" },
-  { type: "Modern", content: "현대적인" },
+const defaultImage = () => import("@/assets/images/Genre/classical.png");
 
-  { type: "Lyrical", content: "서정적인" },
-  { type: "Dynamic", content: "역동적인" },
+const isGenreKeyword = (keyword: string): keyword is GenreKeyword => {
+  return Object.keys(GENRE_IMAGE_MAP).includes(keyword);
+};
 
-  { type: "Romantic", content: "낭만적인" },
-  { type: "Tragic", content: "비극적인" },
+export const Genre = ({
+  genreImgURL,
+  genreKeyword,
+  className,
+  isShow = false,
+}: GenreProps) => {
+  const [imageSrc, setImageSrc] = useState<string>("");
 
-  { type: "Familiar", content: "친숙한" },
-  { type: "Fresh", content: "새로운" },
-];
+  useEffect(() => {
+    const loadImage = async () => {
+      try {
+        if (isGenreKeyword(genreKeyword)) {
+          const imageModule = await GENRE_IMAGE_MAP[genreKeyword]();
+          setImageSrc(imageModule.default);
+        } else {
+          const defaultImageModule = await defaultImage();
+          setImageSrc(defaultImageModule.default);
+        }
+      } catch (error) {
+        console.error("Error loading image:", error);
+        const defaultImageModule = await defaultImage();
+        setImageSrc(defaultImageModule.default);
+      }
+    };
 
-export const Genre = ({ genreType, className, size = 48 }: GenreProps) => {
-  const genreLogo = () => {
-    switch (genreType) {
-      case "Majestic":
-        return <Grand width={size} height={size} viewBox="0 0 48 48" />;
-      case "Delicate":
-        return <Grand width={size} height={size} viewBox="0 0 48 48" />;
-      case "Classical":
-        return <Classical width={size} height={size} viewBox="0 0 48 48" />;
-      case "Modern":
-        return <Classical width={size} height={size} viewBox="0 0 48 48" />;
-      case "Lyrical":
-        return <Lyrical width={size} height={size} viewBox="0 0 48 48" />;
-      case "Dynamic":
-        return <Lyrical width={size} height={size} viewBox="0 0 48 48" />;
-      case "Romantic":
-        return <Romantic width={size} height={size} viewBox="0 0 48 48" />;
-      case "Tragic":
-        return <Grand width={size} height={size} viewBox="0 0 48 48" />;
-      case "Familiar":
-        return <Grand width={size} height={size} viewBox="0 0 48 48" />;
-      case "Fresh":
-        return <Fresh width={size} height={size} viewBox="0 0 48 48" />;
-      default:
-        return null; // 또는 기본 아이콘을 반환할 수 있습니다
-    }
-  };
-
-  const genreContent = () => {
-    return GENRE.filter((genre) => genre.type === genreType)[0].content;
-  };
+    loadImage();
+  }, [genreKeyword]);
 
   return (
     <div
-      className={`flex-col items-center justify-center inline-block space-y-2 text-center text-common-white body2-medium ${className}`}
+      className={`flex-col items-center justify-center inline-block space-y-2 text-center ${className}`}
     >
-      <span className="flex justify-center">{genreLogo()}</span>
-      <div>{genreContent()}</div>
+      <Suspense
+        fallback={
+          <div className="w-12 h-12 bg-gray-200 rounded-md animate-pulse" />
+        }
+      >
+        {imageSrc && (
+          <img
+            src={genreImgURL ?? imageSrc}
+            alt={`${genreKeyword} 공연 성격 키워드 이미지`}
+            className={cn(`w-12 h-12 object-contain`, className)}
+            loading="lazy"
+          />
+        )}
+      </Suspense>
+      {!isShow && (
+        <div className={cn(`text-common-white body2-medium`, className)}>
+          {genreKeyword}
+        </div>
+      )}
     </div>
   );
 };

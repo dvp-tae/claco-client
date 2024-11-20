@@ -1,0 +1,1 @@
+export { default as usePostLike } from "./usePostLike";

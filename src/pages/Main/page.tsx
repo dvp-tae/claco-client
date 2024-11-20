@@ -1,17 +1,11 @@
-import {
-  NearbyEventsSection,
-  PersonalizedSection,
-  SimilarCollectionSection,
-  SimilarShowsSection,
-} from "./containers";
+import { ClassicalPalette } from "@/components/Main/ClassicalPalette";
+import { Analysis } from "@/components/Main/Analysis";
 
 export const MainPage = () => {
   return (
     <div className="pt-[73px]">
-      <NearbyEventsSection />
-      <PersonalizedSection />
-      <SimilarCollectionSection />
-      <SimilarShowsSection />
+      <ClassicalPalette />
+      <Analysis />
     </div>
   );
 };

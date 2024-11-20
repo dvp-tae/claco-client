@@ -2,35 +2,47 @@ import { ReactComponent as Home } from "@/assets/svgs/home.svg";
 import { ReactComponent as Search } from "@/assets/svgs/search.svg";
 import { ReactComponent as Ticket } from "@/assets/svgs/ticket.svg";
 import { ReactComponent as User } from "@/assets/svgs/user.svg";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const CATEGORIES = [
   {
     text: "추천",
     image: <Home />,
+    path: "/main",
   },
   {
     text: "둘러보기",
     image: <Search />,
+    path: "/browse",
   },
   {
-    text: "티켓",
+    text: "티켓북",
     image: <Ticket />,
+    path: "/ticketbook",
   },
   {
     text: "마이페이지",
     image: <User />,
+    path: "/mypage",
   },
 ];
 
 const Footer = () => {
-  const [isActive, setIsActive] = useState<string>(CATEGORIES[0].text);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const getActiveCategory = () => {
+    const currentCategory = CATEGORIES.find(
+      (category) => category.path === location.pathname
+    );
+    return currentCategory?.text || CATEGORIES[0].text;
+  };
 
   const handleFooter = (category: string) => {
-    setIsActive(category);
-    navigate("show/1");
+    const targetCategory = CATEGORIES.find((item) => item.text === category);
+    if (targetCategory) {
+      navigate(targetCategory.path);
+    }
   };
 
   return (
@@ -39,12 +51,18 @@ const Footer = () => {
         {CATEGORIES.map((category, index) => (
           <div
             key={index}
-            className={`flex-col items-center justify-center w-13 h-6 text-center cursor-pointer ${isActive === category.text ? "text-primary-500" : ""}`}
+            className={`flex-col items-center justify-center w-13 h-6 text-center cursor-pointer ${
+              getActiveCategory() === category.text ? "text-primary-500" : ""
+            }`}
             onClick={() => handleFooter(category.text)}
           >
             <span className="flex justify-center">{category.image}</span>
             <span
-              className={`text-[11px] ${isActive === category.text ? "font-bold" : "font-medium"} leading-none`}
+              className={`text-[11px] ${
+                getActiveCategory() === category.text
+                  ? "font-bold"
+                  : "font-medium"
+              } leading-none`}
             >
               {category.text}
             </span>

@@ -1,6 +1,8 @@
 const RoutePath = {
   /*로그인 페이지 */
   Login: "/",
+  BeforeOnBoarding: "/oauth/callback/sign-up",
+  AfterOnBoarding: "/oauth/callback/main",
 
   /*약관동의 페이지 */
   Tos: "/tos",
@@ -23,6 +25,27 @@ const RoutePath = {
   /*공연 리뷰 보기 페이지 */
   ShowReviews: "/show/:id/reviews",
   ShowReviewDetail: "/show/:id/reviews/:reviewId",
+
+  /*둘러보기 페이지 */
+  Browse: "/browse",
+
+  /*클라코북 페이지 */
+  TicketBook: "/ticketbook",
+  TicketBookDetail: "/ticketbook/:id",
+
+  /*클라코 티켓 페이지 */
+  TicketDetail: "/ticket/:id",
+  TicketReviewEdit: "/ticket/:id/edit",
+
+  /*클라코 티켓 등록 페이지 */
+  TicketCreate: "/ticketcreate",
+  TicketSearch: "/ticketcreate/search",
+  TicketInfo: "/ticketcreate/info",
+  TicketReview: "/ticketcreate/review",
+  TicketDownload: "/ticketcreate/download",
+
+  /*마이 페이지 */
+  MyPage: "/mypage",
 } as const;
 
 export default RoutePath;

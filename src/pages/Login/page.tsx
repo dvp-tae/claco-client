@@ -1,12 +1,12 @@
-import { useNavigate } from "react-router-dom";
 import backgroundImage from "../../assets/images/loginbackground.png";
-import logo from "../../assets/images/logo.png";
+import { ReactComponent as ClacoMain } from "@/assets/svgs/Claco_Main.svg";
 
 export const LoginPage = () => {
-  const navigate = useNavigate();
-  const gotoTOS = () => {
-    navigate("/tos");
+  // 카카오 인증 서버로 리다이렉트
+  const handleLogin = () => {
+    window.location.replace(`${import.meta.env.VITE_LOGIN_SERVER_URL}`);
   };
+
   return (
     <div
       className="w-full h-screen bg-center bg-cover"
@@ -15,11 +15,7 @@ export const LoginPage = () => {
       <div className="flex flex-col w-full px-[1.5rem] h-screen justify-end gap-[1.8rem] pb-[9rem]">
         <div className="flex flex-col pl-[0.63rem]">
           <div className="flex items-center gap-[0.56rem]">
-            <img
-              className="self-center py-[0.38rem]"
-              src={logo}
-              alt="로고 이미지"
-            />
+            <ClacoMain />
             <span className="self-end pt-[0.19rem] title3-bold text-grayscale-90">
               에
             </span>
@@ -30,7 +26,7 @@ export const LoginPage = () => {
         </div>
         <button
           className="flex w-full bg-login items-center justify-center rounded-[0.31rem] py-[0.88rem]"
-          onClick={gotoTOS}
+          onClick={handleLogin}
         >
           <span className="body1-regular text-grayscale-20">
             카카오로 시작하기

@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect } from "react";
-import { RecoilRoot } from "recoil";
+
 import ReactQuerySetting from "@/libraries/reactQuery/ReactQuerySetting";
 
 const setScreenHeight = () => {
@@ -17,9 +17,7 @@ export default function AppContainer({ children }: PropsWithChildren) {
 
   return (
     <div className="mx-auto max-w-[450px] min-h-real-screen bg-[#1C1C1C] text-grayscale-80">
-      <ReactQuerySetting>
-        <RecoilRoot>{children}</RecoilRoot>
-      </ReactQuerySetting>
+      <ReactQuerySetting>{children}</ReactQuerySetting>
     </div>
   );
 }

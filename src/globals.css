@@ -47,8 +47,18 @@
       url("./assets/fonts/Pretendard-Regular.subset.woff") format("woff");
   }
 
+  @font-face {
+    font-family: Nonchalance;
+    font-weight: 400;
+    font-display: swap;
+    src:
+      local("Nonchalance Medium"),
+      url("./assets/fonts/Nonchalance-Medium.woff2") format("woff2"),
+      url("./assets/fonts/Nonchalance-Medium.woff") format("woff");
+  }
+
   html {
-    background-color: #f2f2f2;
+    background-color: #1c1c1c;
     @media (max-width: 450px) {
       font-size: 15px;
     }
@@ -195,11 +205,20 @@ input[type="range"]::-webkit-slider-thumb {
 
 .swiper-pagination {
   position: absolute;
-  bottom: 60px !important;
+  bottom: 30px !important;
   right: 10px;
   width: auto !important;
   margin: 0;
 }
+
+.clacobook .swiper-pagination {
+  position: absolute;
+  bottom: 0px !important;
+  right: 0px;
+  width: auto !important;
+  margin: 0;
+}
+
 .swiper-pagination-bullet {
   padding-top: -20px;
   border-radius: 50%;
@@ -212,6 +231,7 @@ input[type="range"]::-webkit-slider-thumb {
   opacity: 1;
   background: #626262;
 }
+
 .swiper-pagination-bullet-active {
   color: #fff;
   background: #d9d9d9;
@@ -220,7 +240,6 @@ input[type="range"]::-webkit-slider-thumb {
 .thumbnail .swiper-slide {
   border-radius: 5px;
   max-width: 90px;
-  /* max-height: 90px; */
   margin-right: 20px;
   img {
     border-radius: 5px;
@@ -229,11 +248,25 @@ input[type="range"]::-webkit-slider-thumb {
 
 .thumbnail .swiper-slide-thumb-active {
   max-width: 90px;
-  /* min-height: 90px; */
   border: 1px solid #ecebe7;
   border-radius: 5px;
 }
 
 .change-gender-fillcolor path {
   fill: #e9663a;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up {
+  animation: slideUp 1s ease-out;
 }

@@ -1,29 +1,33 @@
-import { ConceptButton } from "@/components/Onboarding/Registration";
 import { Progress } from "@/components/ui/progress";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as BackArrow } from "@/assets/svgs/BackArrow.svg";
 import { ConfirmButton } from "@/components/common/Button";
+import { Concept } from "@/components/common/Concept";
+import { useState } from "react";
+import { useUserStore } from "@/libraries/store/user";
+import { useOnboardingStore } from "@/libraries/store/onboarding";
 
 export const SelectConceptPage = () => {
+  const navigate = useNavigate();
+  const nickname = useUserStore((state) => state.nickname);
+  const setConcept = useOnboardingStore((state) => state.setTypePreferences);
   const [selectedConcept, setSelectedConcept] = useState<string[]>([]);
 
-  const handleConceptClick = (concept: string) => {
-    if (selectedConcept.includes(concept)) {
-      setSelectedConcept(selectedConcept.filter((con) => con !== concept));
-    } else {
-      setSelectedConcept([...selectedConcept, concept]);
-    }
-  };
-
-  const navigate = useNavigate();
-
   const handleBackClick = () => {
-    navigate("/create/location");
+    navigate("/create/price");
   };
 
   const handleConfirmClick = () => {
+    if (selectedConcept) setConcept(selectedConcept);
     navigate("/create/feature");
+  };
+
+  const handleConceptClick = (concept: string) => {
+    setSelectedConcept((prevSelectedConcept) =>
+      prevSelectedConcept.includes(concept)
+        ? prevSelectedConcept.filter((con) => con !== concept)
+        : [...prevSelectedConcept, concept],
+    );
   };
 
   return (
@@ -32,12 +36,12 @@ export const SelectConceptPage = () => {
         <div className="flex flex-col gap-[2.44rem]">
           <div className="flex-col">
             <BackArrow className="mb-[1.19rem]" onClick={handleBackClick} />
-            <Progress value={44.4} />
+            <Progress value={44.44} />
           </div>
           <span className="heading1-bold text-grayscale-90">
-            울랄라님의 취향에 맞는
+            {nickname}님 취향에 맞는
             <br />
-            클래식 공연을 알아볼까요?
+            클래식 공연을 추천드릴게요
           </span>
         </div>
         <div className="flex flex-col justify-between h-full">
@@ -45,23 +49,11 @@ export const SelectConceptPage = () => {
             <span className="body1-medium text-grayscale-60">
               선호하는 클래식 공연 유형을 모두 선택해주세요.
             </span>
-            <div className="flex flex-col gap-[0.75rem]">
-              <ConceptButton
-                isChecked={selectedConcept.includes("1")}
-                onClick={() => handleConceptClick("1")}
-              >
-                음악 자체에 깊이 집중할 수 있는
-                <br />
-                클래식 공연이 좋아요.
-              </ConceptButton>
-              <ConceptButton
-                isChecked={selectedConcept.includes("2")}
-                onClick={() => handleConceptClick("2")}
-              >
-                무용, 발레 등 음악과 퍼포먼스를
-                <br />
-                모두 감상할 수 있는 공연이 좋아요.
-              </ConceptButton>
+            <div className="slide-up">
+              <Concept
+                selectedConcept={selectedConcept}
+                onConceptClick={handleConceptClick}
+              />
             </div>
           </div>
           <ConfirmButton
