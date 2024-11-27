@@ -1,19 +1,32 @@
 import { ReactComponent as Heart } from "@/assets/svgs/Heart.svg";
 import { CategoryTag } from "@/components/common/CategoryTag";
+import { Skeleton } from "@/components/ui/skeleton";
+import { usePostLike } from "@/hooks/mutation";
 import { extractDateRange } from "@/hooks/utils";
 import { ShowSummaryCardProps } from "@/types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export const ShowSummaryCard = ({ data }: ShowSummaryCardProps) => {
-  const [isLiked, setIsLiked] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [isLiked, setIsLiked] = useState<boolean>(data.liked);
+  const mutation = usePostLike();
+
   const gotoShowDetail = (id: number) => {
     navigate(`/show/${id}`);
   };
 
+  const handleLike = () => {
+    setIsLiked((prev) => !prev);
+    mutation.mutate(data.id, {
+      onError: () => {
+        setIsLiked((prev) => !prev);
+      },
+    });
+  };
+
   return (
-    <div className="flex items-center" onClick={() => gotoShowDetail(data.id)}>
+    <div className="flex items-center">
       <div className="relative">
         <img
           src={data.poster}
@@ -28,7 +41,7 @@ export const ShowSummaryCard = ({ data }: ShowSummaryCardProps) => {
 
         <span
           className="absolute top-[13px] right-[10px]"
-          onClick={() => setIsLiked((prev) => !prev)}
+          onClick={handleLike}
         >
           {isLiked ? (
             <Heart className="fill-grayscale-80" />
@@ -38,7 +51,7 @@ export const ShowSummaryCard = ({ data }: ShowSummaryCardProps) => {
         </span>
       </div>
 
-      <div className="flex flex-col ml-4 max-w-[207px]">
+      <div className="flex flex-col ml-4 max-w-[207px]" onClick={() => gotoShowDetail(data.id)}>
         <div className="flex flex-col min-w-[186px]">
           <span className="caption-12 self-start mb-[9px]">
             <CategoryTag categoryType={data.prfstate} />
@@ -69,4 +82,8 @@ export const ShowSummaryCard = ({ data }: ShowSummaryCardProps) => {
       </div>
     </div>
   );
+};
+
+ShowSummaryCard.Skeleton = () => {
+  return <Skeleton className="h-[179px] w-full flex-shrink-0 rounded-[3px]" />;
 };

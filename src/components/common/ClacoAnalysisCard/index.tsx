@@ -4,6 +4,8 @@ import { Genre } from "@/components/common/Genre";
 import { useUserStore } from "@/libraries/store/user";
 import { useGetUserPreferences } from "@/hooks/queries";
 import { PreferCategory } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDeferredLoading } from "@/hooks/utils";
 
 export type ClacoAnalysisCardProps = {
   type: string;
@@ -20,6 +22,7 @@ export const ClacoAnalysisCard = ({ type }: ClacoAnalysisCardProps) => {
 
   useEffect(() => {
     if (!isLoading && data?.result?.preferCategories) {
+      // console.log(data);
       setUserPreference(data.result.preferCategories);
     }
   }, [isLoading, data]);
@@ -47,9 +50,27 @@ export const ClacoAnalysisCard = ({ type }: ClacoAnalysisCardProps) => {
     return () => clearTimeout(timer);
   }, [userPreference]);
 
-  if (isLoading) {
-    //skeleton UI 적용될 부분
-    return <div>로딩 중..</div>;
+  const { shouldShowSkeleton } = useDeferredLoading(isLoading);
+
+  if (shouldShowSkeleton) {
+    return (
+      <div className="flex flex-col gap-[10px] mb-10">
+        <Skeleton className="w-[127px] h-[27px]" />
+        <Skeleton className="w-[235px] h-[27px]" />
+        <Skeleton className="w-full h-[36px]" />
+        <div className="flex justify-center mb-[23px]">
+          <Skeleton className="w-[252px] h-[252px]" />
+        </div>
+        <div className="flex justify-between">
+          {Array.from(Array(5).keys()).map((_, index) => (
+            <div key={index} className="flex flex-col gap-[8px]">
+              <Skeleton className="w-[48px] h-[48px]" />
+              <Skeleton className="w-[48px] h-[18px]" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (

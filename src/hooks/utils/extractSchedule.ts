@@ -2,13 +2,13 @@ import { PrfGuidance } from "@/components/ShowDetail/ShowInformation/ShowEssenti
 import { DaysMapType } from "@/types";
 
 const daysMap: DaysMapType[] = [
-  { day: "월요일", dayIndex: 0 },
-  { day: "화요일", dayIndex: 1 },
-  { day: "수요일", dayIndex: 2 },
-  { day: "목요일", dayIndex: 3 },
-  { day: "금요일", dayIndex: 4 },
-  { day: "토요일", dayIndex: 5 },
-  { day: "일요일", dayIndex: 6 },
+  { day: "일요일", dayIndex: 0 },
+  { day: "월요일", dayIndex: 1 },
+  { day: "화요일", dayIndex: 2 },
+  { day: "수요일", dayIndex: 3 },
+  { day: "목요일", dayIndex: 4 },
+  { day: "금요일", dayIndex: 5 },
+  { day: "토요일", dayIndex: 6 },
 ];
 
 const extractSchedule = (dtguidance: string): PrfGuidance[] => {

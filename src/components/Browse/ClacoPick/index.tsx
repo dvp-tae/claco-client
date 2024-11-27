@@ -1,8 +1,17 @@
-import { ClacoPickProps } from "@/types";
 import { ClacoPickShow } from "./ClacoPickShow";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useUserStore } from "@/libraries/store/user";
+import { ClacoPickProps } from "@/types";
+import { useNavigate } from "react-router-dom";
 
-export const ClacoPick = ({ userName, picks }: ClacoPickProps) => {
+export const ClacoPick = ({ pickData }: ClacoPickProps) => {
+  const { nickname } = useUserStore();
+  const navigate = useNavigate();
+
+  const gotoConcertDetail = (id: number) => {
+    navigate(`/show/${id}`);
+  };
+
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col">
@@ -10,7 +19,7 @@ export const ClacoPick = ({ userName, picks }: ClacoPickProps) => {
           이런 공연은 어떠세요?
         </span>
         <span className="body2-semibold text-grayscale-60">
-          {userName}님이 좋아할 만한 공연이에요
+          {nickname}님이 좋아할 만한 공연이에요
         </span>
       </div>
 
@@ -22,12 +31,13 @@ export const ClacoPick = ({ userName, picks }: ClacoPickProps) => {
           }}
           className="max-w-screen-sm"
         >
-          {picks.map((pick, index) => (
+          {pickData.map((pick, index) => (
             <SwiperSlide
               key={index}
               className="w-[114px] rounded-[5px] mr-[13.84px]"
+              onClick={() => gotoConcertDetail(pick.id)}
             >
-              <ClacoPickShow imageSrc={pick.imageSrc} title={pick.title} />
+              <ClacoPickShow imageSrc={pick.poster} title={pick.prfnm} />
             </SwiperSlide>
           ))}
         </Swiper>

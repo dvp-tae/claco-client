@@ -8,6 +8,13 @@ import { ChangeEvent } from "react";
 export const StarRating = ({ rating = 0, onRatingChange }: StarRatingProps) => {
   const STAR_IDX_ARR = ["first", "second", "third", "fourth", "last"];
 
+  const handleStarClick = (idx: number) => {
+    const newRating = idx + 1;
+    if (onRatingChange) {
+      onRatingChange(newRating);
+    }
+  };
+
   const handleRangeChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (onRatingChange) {
       onRatingChange(parseFloat(e.target.value));
@@ -22,7 +29,7 @@ export const StarRating = ({ rating = 0, onRatingChange }: StarRatingProps) => {
         </span>
         <Required />
       </div>
-      <div className="flex items-center gap-[10px] relative">
+      <div className="flex w-[140px] items-center gap-[10px] relative">
         {STAR_IDX_ARR.map((_, idx) => {
           const currentRating = rating - idx;
 
@@ -36,7 +43,11 @@ export const StarRating = ({ rating = 0, onRatingChange }: StarRatingProps) => {
           }
 
           return (
-            <span className="inline-flex">
+            <span
+              key={idx}
+              className="inline-flex cursor-pointer"
+              onClick={() => handleStarClick(idx)}
+            >
               {StarIcon ? (
                 StarIcon === HalfStar ? (
                   <div className="relative">
@@ -79,8 +90,7 @@ export const StarRating = ({ rating = 0, onRatingChange }: StarRatingProps) => {
           step="0.5"
           value={rating}
           onChange={handleRangeChange}
-          className="w-[180px] h-full absolute opacity-0 cursor-pointer pointer-events-auto z-30"
-          style={{ touchAction: "none" }}
+          className="w-[140px] h-full absolute opacity-0 cursor-pointer z-30"
         />
       </div>
     </div>

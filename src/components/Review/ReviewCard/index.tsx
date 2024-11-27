@@ -1,15 +1,12 @@
-// import { ReactComponent as Like } from "@/assets/svgs/Like.svg";
-// import { useState } from "react";
-
 import { ReactComponent as BackArrow } from "@/assets/svgs/BackArrow.svg";
 import { ReactComponent as Star } from "@/assets/svgs/StarRating.svg";
 import { useTruncateText } from "@/hooks/utils";
 import { ReviewTag } from "@/components/common/ReviewTag";
 import { useNavigate } from "react-router-dom";
 import { ReviewCardProps } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const ReviewCard = ({ review, onClick }: ReviewCardProps) => {
-  // const [isLiked, setIsLiked] = useState<boolean>(false);
   const SHOW_LENGTH = review.reviewImages.length === 0 ? 90 : 60;
 
   const navigate = useNavigate();
@@ -28,14 +25,6 @@ export const ReviewCard = ({ review, onClick }: ReviewCardProps) => {
           />
           <div className="headline2-bold">{review.userName}</div>
         </div>
-        {/* 좋아요 서버 api 개발 시 수정 예정 */}
-        {/* <div
-          className={`flex items-center space-x-1 ${isLiked ? "text-secondary2-100" : "text-grayscale-60"}`}
-          onClick={() => setIsLiked((prev) => !prev)}
-        >
-          <Like />
-          <span className="body2-medium">좋아요수</span>
-        </div> */}
       </div>
 
       <div className="flex space-x-[14px] max-h-[90px] mb-[19px]">
@@ -44,7 +33,7 @@ export const ReviewCard = ({ review, onClick }: ReviewCardProps) => {
             <img
               src={review.reviewImages?.[0]?.imageUrl}
               alt="공연 이미지"
-              className="min-w-[90px] h-[90px] rounded-[5px] object-fill"
+              className="min-w-[90px] max-w-[90px] h-[90px] rounded-[5px] object-fill"
             />
             <div className="absolute bottom-0 right-0 w-[19px] h-[19px] bg-[#8A8585] caption-12 rounded-br-[5px] flex justify-center items-center">
               <span className="text-center">{review.reviewImages.length}</span>
@@ -81,7 +70,9 @@ export const ReviewCard = ({ review, onClick }: ReviewCardProps) => {
       </div>
 
       <div className="flex justify-between caption-12">
-        <div className="text-grayscale-50">{review.createdDate}</div>
+        <div className="text-grayscale-50">
+          {review.createdDate.replace(/-/g, ".")}
+        </div>
         <div className="flex items-center space-x-2 text-grayscale-60">
           <div onClick={() => gotoReviewDetail(review.ticketReviewId)}>
             더 보기
@@ -96,4 +87,8 @@ export const ReviewCard = ({ review, onClick }: ReviewCardProps) => {
       </div>
     </div>
   );
+};
+
+ReviewCard.Skeleton = () => {
+  return <Skeleton className="w-full h-[298px]" />;
 };

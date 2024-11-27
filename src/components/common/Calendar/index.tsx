@@ -8,13 +8,17 @@ export const Calendar = ({
   mode = "single",
   selectedDate = null,
   onDateSelect,
-  startDate,
-  endDate,
+  showTimesByDate,
+  startYear = new Date().getFullYear(),
+  startMonth = new Date().getMonth(),
   rangeStart = null,
   rangeEnd = null,
   onRangeSelect,
 }: CalendarProps) => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(
+    new Date(startYear || new Date().getFullYear(), (startMonth || 1) - 1, 1),
+  );
+
   const [internalRangeStart, setInternalRangeStart] = useState<Date | null>(
     rangeStart,
   );
@@ -22,12 +26,20 @@ export const Calendar = ({
     rangeEnd,
   );
 
+  const performanceDates = Object.keys(showTimesByDate || "");
+
   const getYear = () => currentDate.getFullYear();
   const getMonth = () => currentDate.getMonth();
 
   const startOfMonth = new Date(getYear(), getMonth(), 1);
   const endOfMonth = new Date(getYear(), getMonth() + 1, 0);
   const startDay = startOfMonth.getDay();
+
+  useEffect(() => {
+    if (startYear && startMonth) {
+      setCurrentDate(new Date(startYear, startMonth, 1));
+    }
+  }, [startYear, startMonth]);
 
   useEffect(() => {
     setInternalRangeStart(rangeStart);
@@ -75,8 +87,11 @@ export const Calendar = ({
   };
 
   const isDateInRange = (date: Date) => {
-    if (!startDate || !endDate) return true;
-    return date >= startDate && date <= endDate;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const dateString = `${year}-${month}-${day}`;
+    return performanceDates.includes(dateString);
   };
 
   const isWithinSelectedRange = (date: Date) => {

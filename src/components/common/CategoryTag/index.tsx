@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { CategoryTagProps } from "@/types";
 
 export const CategoryTag = ({ categoryType, className }: CategoryTagProps) => {
@@ -28,4 +29,8 @@ export const CategoryTag = ({ categoryType, className }: CategoryTagProps) => {
             : "공연 예정"}
     </div>
   );
+};
+
+CategoryTag.Skeleton = () => {
+  return <Skeleton className="w-[43px] h-[22.5px]" />;
 };

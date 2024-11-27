@@ -6,7 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const CATEGORIES = [
   {
-    text: "추천",
+    text: "홈",
     image: <Home />,
     path: "/main",
   },

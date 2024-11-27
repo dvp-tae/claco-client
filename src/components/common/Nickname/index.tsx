@@ -14,7 +14,7 @@ export const Nickname = ({
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [hasStartedTyping, setHasStartedTyping] = useState<boolean>(false);
   const [isDuplicate, setIsDuplicate] = useState<boolean>(false);
-  const debouncedNickname = useDebouncedState<string>(nickname, 1000);
+  const debouncedNickname = useDebouncedState<string>(nickname, 300);
 
   const validateNickname = useCallback((name: string): string => {
     const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/g;

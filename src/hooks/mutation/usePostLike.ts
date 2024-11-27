@@ -15,12 +15,16 @@ const usePostLike = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: postLike,
-    onSuccess: (_, likeId) => {
-      const allLikes = queryClient.getQueryData<Like[]>(["likes"]);
-      const updatedLikes = allLikes?.map((like) =>
-        like.likeId === likeId ? { ...like, liked: !like.liked } : like,
-      );
-      queryClient.setQueryData(["likes"], updatedLikes);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userBased"] });
+      queryClient.invalidateQueries({ queryKey: ["itemBased"] });
+      queryClient.invalidateQueries({ queryKey: ["concert-data"] });
+      queryClient.invalidateQueries({
+        queryKey: ["search-concert-data"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["search-liked-concert-data"],
+      });
     },
     onError: (error) => {
       console.error(error);

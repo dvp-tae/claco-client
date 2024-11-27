@@ -3,7 +3,7 @@ import { ImageReviewProps } from "@/types";
 
 export const ImageReview = ({ files, onFileChange }: ImageReviewProps) => {
   return (
-    <div className="flex flex-col mt-8 mb-8">
+    <div className="flex flex-col mt-[40px] mb-8">
       <span className="headline2-bold text-grayscale-80">
         사진 또는 비디오를 첨부해 <br />
         보다 생생한 리뷰를 공유해주세요.

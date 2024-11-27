@@ -1,32 +1,58 @@
 import { client } from "@/apis";
-import { GetConcertListProps, GetConcertListResponse } from "@/types";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import {
+  GetConcertInfiniteResponse,
+  GetConcertListProps,
+  GetConcertListResponse,
+} from "@/types";
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
+} from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
-const getConcertList = async ({
+const getConcertsList = async ({
   genre,
   page,
   size = 9,
 }: GetConcertListProps): Promise<GetConcertListResponse> => {
   const response = await client.get<GetConcertListResponse>(`/concerts/views`, {
     params: {
-      genre: genre,
-      page: page,
-      size: size,
+      genre,
+      page,
+      size,
     },
   });
   return response.data;
 };
 
-const useGetConcertList = ({
+const useGetConcertsList = ({
   genre,
-  page,
-  size,
-}: GetConcertListProps): UseQueryResult<GetConcertListResponse, AxiosError> => {
-  return useQuery<GetConcertListResponse, AxiosError>({
-    queryKey: ["concert-list", genre, page],
-    queryFn: () => getConcertList({ genre, page, size }),
+  size = 9,
+}: Omit<GetConcertListProps, "page">): UseInfiniteQueryResult<
+  GetConcertInfiniteResponse,
+  AxiosError
+> => {
+  return useInfiniteQuery({
+    queryKey: ["concert-data", genre],
+    queryFn: ({ pageParam = 1 }) =>
+      getConcertsList({ genre, page: pageParam, size }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.result.currentPage !== allPages[0].result.totalPage
+        ? lastPage.result.currentPage + 1
+        : undefined;
+    },
   });
 };
 
-export default useGetConcertList;
+export default useGetConcertsList;
+
+/**
+ * No description
+ *
+ * @tags useGetInfiniteConcerts
+ * @name concert-controller
+ * @summary 둘러보기 공연 조회 API
+ * @request GET: /concerts/views
+ * @secure bearer
+ */

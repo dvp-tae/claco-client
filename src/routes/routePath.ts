@@ -46,6 +46,8 @@ const RoutePath = {
 
   /*마이 페이지 */
   MyPage: "/mypage",
+  MyPageUserEdit: "/mypage/user",
+  MyPagePreferenceEdit: "/mypage/preference",
 } as const;
 
 export default RoutePath;

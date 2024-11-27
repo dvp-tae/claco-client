@@ -15,7 +15,6 @@ export const AIRecommend = () => {
 
   useEffect(() => {
     if (!isLoading && data?.result) {
-      // console.log(data);
       setUserBased(data.result);
     }
   }, [isLoading, data]);

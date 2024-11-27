@@ -1,3 +1,5 @@
+import { PlaceCategory, TagCategory } from "./category";
+
 export type SearchBarProps = {
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -9,13 +11,21 @@ export type SearchBarProps = {
 export type KeywordTagProps = {
   selectedTags: string[];
   onTagClick: (tag: string) => void;
+  tagCategories: TagCategory[];
 };
 
 export type ReviewQuestionProps = {
-  title: string;
-  tags: string[];
-  selectedTag: string | null;
-  onTagClick: (tag: string) => void;
+  selectedSoundTag: string | null;
+  setSelectedSoundTag: (value: string | null) => void;
+  selectedSeatTag1: string | null;
+  setSelectedSeatTag1: (value: string | null) => void;
+  selectedSeatTag2: string | null;
+  setSelectedSeatTag2: (value: string | null) => void;
+  selectedSightTag: string | null;
+  setSelectedSightTag: (value: string | null) => void;
+  selectedAccessibilityTag: string | null;
+  setSelectedAccessibilityTag: (value: string | null) => void;
+  placeCategories: PlaceCategory[];
 };
 
 export type TextReviewProps = {
@@ -29,13 +39,6 @@ export type ImageReviewProps = {
 };
 
 export type ReviewContentProps = TextReviewProps & ImageReviewProps;
-
-export type SeatQuestionsProps = {
-  selectedTag1: string | null;
-  selectedTag2: string | null;
-  onTagClick1: (tag: string) => void;
-  onTagClick2: (tag: string) => void;
-};
 
 export type StarRatingProps = {
   rating: number;
@@ -74,4 +77,56 @@ export type TicketReview = {
   placeReviews: PlaceReview[];
   imageUrlS: ImageUrl[];
   editor: boolean;
+};
+
+export type ClacoBookList = {
+  id: number | null;
+  title: string;
+  color: string;
+};
+
+export type ClacoBookListResult = {
+  clacoBookList: ClacoBookList[];
+};
+
+export type ClacoTicketListResult = {
+  id: number;
+  ticketImage: string;
+};
+
+export type ClacoBookListResponse = {
+  code: string;
+  message: string;
+  result: ClacoBookListResult;
+  refreshed: boolean;
+};
+
+export type ClacoTicketListResponse = {
+  code: string;
+  message: string;
+  result: {
+    ticketList: ClacoTicketListResult[];
+  };
+  refreshed: boolean;
+};
+
+export type ClacoTicketProps = {
+  concertPoster: string;
+  watchDate: string;
+  concertName: string;
+  concertTags: { iconUrl: string; tagName: string }[];
+};
+
+export type EditClacoTicketReviewProps = {
+  ticketReviewId: number;
+  watchSit: string | null;
+  starRate: number | null;
+  content: string | null;
+};
+
+export type EditClacoTicketReviewResponse = {
+  code: string;
+  message: string;
+  result: EditClacoTicketReviewProps;
+  refreshed: boolean;
 };

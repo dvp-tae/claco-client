@@ -1,9 +1,9 @@
 import { ReactComponent as Book } from "@/assets/svgs/Book.svg";
 import { Genre } from "@/components/common/Genre";
-import { GenreTag } from "@/types";
+import { TagCategory } from "@/types";
 
 export type PerformacneAttributesProps = {
-  categories: GenreTag[];
+  categories: TagCategory[];
   title: string;
 };
 

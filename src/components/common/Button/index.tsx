@@ -8,6 +8,7 @@ export const ConfirmButton = ({
   isChecked,
   children,
   className = "",
+  disabled,
   ...props
 }: ButtonProps) => {
   return (
@@ -18,8 +19,9 @@ export const ConfirmButton = ({
             ? "bg-primary text-grayscale-90"
             : "bg-grayscale-20 text-grayscale-60"
         }`,
-        className,
+        className
       )}
+      disabled={disabled}
       {...props}
     >
       {children}

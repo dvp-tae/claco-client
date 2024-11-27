@@ -6,9 +6,10 @@ import { ReactComponent as Megaphone } from "@/assets/svgs/Megaphone.svg";
 import { ReactComponent as Book } from "@/assets/svgs/Book.svg";
 import { Genre } from "@/components/common/Genre";
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShowCategory } from "@/types";
 import { usePostLike } from "@/hooks/mutation";
+import { useConcertInfoStore } from "@/libraries/store/concertInfo";
 
 export type ShowOverViewProps = {
   prfstate: string;
@@ -39,6 +40,15 @@ const ShowOverview = ({
   categories,
   liked,
 }: ShowOverViewProps) => {
+  const { setConcertInfo } = useConcertInfoStore();
+  useEffect(() => {
+    setConcertInfo({
+      genrenm,
+      prfstate,
+      prfnm,
+    });
+  }, [genrenm, prfstate, prfnm, setConcertInfo]);
+
   const navigate = useNavigate();
   const [_liked, setLiked] = useState(liked);
   const [isExpanded, setIsExpanded] = useState(false);

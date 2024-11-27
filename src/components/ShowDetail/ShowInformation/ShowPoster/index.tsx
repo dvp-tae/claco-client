@@ -25,7 +25,7 @@ const ShowPoster = forwardRef<HTMLDivElement, DetailsInfoSectionProps>(
 
     return (
       <section ref={ref}>
-        <div className="px-6 pb-[100px]">
+        <div className="px-6 pb-[73px]">
           <span className="headline2-bold text-grayscale-80">상세정보</span>
           <div className="flex flex-col items-center space-y-[22px]">
             <div

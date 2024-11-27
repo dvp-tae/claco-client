@@ -1,21 +1,15 @@
-import { useState, useEffect } from "react";
+import { SelectThumbnail, UseThumbnailModalReturn } from "@/types";
 import { Swiper as SwiperType } from "swiper";
-
-export type UseThumbnailModalReturn = {
-  thumbsSwiper: SwiperType | null;
-  isThumbnailShow: boolean;
-  isAnimating: boolean;
-  selectIndex: number;
-  setThumbsSwiper: (swiper: SwiperType | null) => void;
-  setSelectIndex: (index: number) => void;
-  handleImageClick: () => void;
-};
+import { useState, useEffect } from "react";
 
 const useThumbnailModal = (): UseThumbnailModalReturn => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
   const [isThumbnailShow, setIsThumbnailShow] = useState<boolean>(false);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
-  const [selectIndex, setSelectIndex] = useState<number>(0);
+  const [selectIndex, setSelectIndex] = useState<SelectThumbnail>({
+    page: 1,
+    index: 0,
+  });
 
   useEffect(() => {
     if (isThumbnailShow) {

@@ -29,6 +29,8 @@ import { ClacoTicketReviewEditPage } from "@/pages/Ticket/[id]/edit/page";
 import { BeforeOnBoardingPage } from "@/pages/Login/Kakao/BeforeOnBoarding/page";
 import { AfterOnBoardingPage } from "@/pages/Login/Kakao/AfterOnBoarding/page";
 import AuthenticatedLayout from "./AuthenticatedLayout";
+import { UserEditPage } from "@/pages/Mypage/UserEdit/page";
+import { PreferenceEditPage } from "@/pages/Mypage/PreferenceEdit/page";
 
 const routes: RouteObject[] = [
   {
@@ -62,7 +64,6 @@ const routes: RouteObject[] = [
           { path: RoutePath.Main, element: <MainPage /> },
           { path: RoutePath.Browse, element: <BrowsePage /> },
           { path: RoutePath.TicketBook, element: <ClacoBookPage /> },
-          { path: RoutePath.MyPage, element: <MyPage /> },
         ],
       },
       {
@@ -101,6 +102,18 @@ const routes: RouteObject[] = [
           { path: RoutePath.TicketInfo, element: <TicketInfoPage /> },
           { path: RoutePath.TicketReview, element: <TicketReviewPage /> },
           { path: RoutePath.TicketDownload, element: <TicketDownloadPage /> },
+        ],
+      },
+      {
+        path: RoutePath.MyPage,
+        element: <Layout />,
+        children: [
+          { index: true, element: <MyPage /> },
+          { path: RoutePath.MyPageUserEdit, element: <UserEditPage /> },
+          {
+            path: RoutePath.MyPagePreferenceEdit,
+            element: <PreferenceEditPage />,
+          },
         ],
       },
     ],

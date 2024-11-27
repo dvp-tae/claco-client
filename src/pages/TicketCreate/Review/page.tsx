@@ -6,15 +6,17 @@ import { ConfirmButton } from "@/components/common/Button";
 import { ReviewContents } from "@/components/Ticket/AudienceReview/ReviewContents";
 import { StarRating } from "@/components/Ticket/AudienceReview/StarRating";
 import { KeywordTags } from "@/components/Ticket/AudienceReview/KeywordTags";
-import {
-  ReviewQuestion,
-  SeatQuestions,
-} from "@/components/Ticket/AudienceReview/ReviewQuestions";
 import { Modal } from "@/components/common/Modal";
-import { accessibilityTags, sightTags, soundTags } from "../const";
+import { ReviewQuestions } from "@/components/Ticket/AudienceReview/ReviewQuestions";
+import { PlaceCategory, TagCategory, TicketReviewRequest } from "@/types";
+import { usePostTicketReview } from "@/hooks/mutation";
+import getTagCategories from "@/apis/useGetTagCategories";
+import getPlaceCategories from "@/apis/useGetPlaceCategories";
 
 export const TicketReviewPage = () => {
   const navigate = useNavigate();
+  const { mutate: postTicketReview } = usePostTicketReview();
+
   const [rating, setRating] = useState(0);
   const [selectedKeywordTags, setSelectedKeywordTags] = useState<string[]>([]);
   const [selectedSoundTag, setSelectedSoundTag] = useState<string | null>(null);
@@ -28,6 +30,30 @@ export const TicketReviewPage = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [isComplete, setIsComplete] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [tagCategories, setTagCategories] = useState<TagCategory[]>([]);
+  const [placeCategories, setPlaceCategories] = useState<PlaceCategory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [tagData, placeData] = await Promise.all([
+          getTagCategories(),
+          getPlaceCategories(),
+        ]);
+
+        setTagCategories(tagData.result.categories);
+        setPlaceCategories(placeData.result.categories);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -54,13 +80,55 @@ export const TicketReviewPage = () => {
   };
 
   const handleConfirmClick = () => {
-    navigate("/ticketcreate/download");
+    if (!isComplete) return;
+
+    let clacoBookId;
+
+    if (localStorage.getItem("clacoBookId")) {
+      clacoBookId = Number(localStorage.getItem("clacoBookId"));
+    }
+
+    const selectedPlaceReview: PlaceCategory[] = [
+      selectedSoundTag,
+      selectedSeatTag1,
+      selectedSeatTag2,
+      selectedSightTag,
+      selectedAccessibilityTag,
+    ]
+      .filter(Boolean)
+      .map((selectedTag) =>
+        placeCategories.find(
+          (category) => category.categoryName === selectedTag
+        )
+      )
+      .filter((category): category is PlaceCategory => category !== undefined);
+
+    const selectedTags: TagCategory[] = selectedKeywordTags
+      .map((selectedTag) =>
+        tagCategories?.find((category) => category.tagName === selectedTag)
+      )
+      .filter((category): category is TagCategory => category !== undefined);
+    const request: TicketReviewRequest = {
+      concertId: JSON.parse(localStorage.getItem("showId") || '""'),
+      clacoBookId: clacoBookId,
+      watchDate: localStorage.getItem("showDate") || "",
+      watchRound: localStorage.getItem("showTime") || "",
+      watchSit: localStorage.getItem("seat") || "",
+      starRate: rating,
+      casting: localStorage.getItem("castingList") || "",
+      content: reviewText,
+      placeReviewIds: selectedPlaceReview,
+      tagCategoryIds: selectedTags,
+      files: files,
+    };
+
+    postTicketReview(request);
   };
 
   useEffect(() => {
     const allRequiredSelected =
       rating >= 0 &&
-      selectedKeywordTags.length > 0 &&
+      selectedKeywordTags.length === 5 &&
       selectedSoundTag !== null &&
       selectedSeatTag1 !== null &&
       selectedSeatTag2 !== null &&
@@ -79,6 +147,10 @@ export const TicketReviewPage = () => {
     selectedAccessibilityTag,
     reviewText,
   ]);
+
+  if (isLoading) {
+    return <div>로딩중</div>;
+  }
 
   return (
     <div className="flex flex-col min-h-screen px-[24px] pt-[46px] pb-[60px]">
@@ -101,7 +173,15 @@ export const TicketReviewPage = () => {
           positiveButtonText="계속하기"
           negativeButtonText="나가기"
           onPositiveButtonClick={handleCloseModal}
-          onNegativeButtonClick={() => navigate("/ticketbook")}
+          onNegativeButtonClick={() => {
+            localStorage.removeItem("clacoBookId");
+            localStorage.removeItem("showDate");
+            localStorage.removeItem("showTime");
+            localStorage.removeItem("showPlace");
+            localStorage.removeItem("seat");
+            localStorage.removeItem("castingList");
+            navigate("/ticketbook");
+          }}
         >
           <div className="flex flex-col items-center justify-center mt-[13px] mb-[30px]">
             <span className="headline2-bold text-grayscale-80">
@@ -118,30 +198,20 @@ export const TicketReviewPage = () => {
       <KeywordTags
         selectedTags={selectedKeywordTags}
         onTagClick={handleKeywordTagClick}
+        tagCategories={tagCategories || []}
       />
-      <ReviewQuestion
-        title="Q. 음향은 어땠나요?"
-        tags={[...soundTags]}
-        selectedTag={selectedSoundTag}
-        onTagClick={setSelectedSoundTag}
-      />
-      <SeatQuestions
-        selectedTag1={selectedSeatTag1}
-        selectedTag2={selectedSeatTag2}
-        onTagClick1={setSelectedSeatTag1}
-        onTagClick2={setSelectedSeatTag2}
-      />
-      <ReviewQuestion
-        title="Q. 시야는 어땠나요?"
-        tags={[...sightTags]}
-        selectedTag={selectedSightTag}
-        onTagClick={setSelectedSightTag}
-      />
-      <ReviewQuestion
-        title="Q. 접근성은 어땠나요?"
-        tags={[...accessibilityTags]}
-        selectedTag={selectedAccessibilityTag}
-        onTagClick={setSelectedAccessibilityTag}
+      <ReviewQuestions
+        selectedSoundTag={selectedSoundTag}
+        setSelectedSoundTag={setSelectedSoundTag}
+        selectedSeatTag1={selectedSeatTag1}
+        setSelectedSeatTag1={setSelectedSeatTag1}
+        selectedSeatTag2={selectedSeatTag2}
+        setSelectedSeatTag2={setSelectedSeatTag2}
+        selectedSightTag={selectedSightTag}
+        setSelectedSightTag={setSelectedSightTag}
+        selectedAccessibilityTag={selectedAccessibilityTag}
+        setSelectedAccessibilityTag={setSelectedAccessibilityTag}
+        placeCategories={placeCategories}
       />
 
       <ReviewContents

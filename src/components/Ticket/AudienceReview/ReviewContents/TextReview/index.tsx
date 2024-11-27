@@ -9,7 +9,7 @@ export const TextReview = ({ value, onChange }: TextReviewProps) => {
     }
   };
   return (
-    <div className="flex flex-col mt-8">
+    <div className="flex flex-col mt-[40px]">
       <div className="flex">
         <span className="headline2-bold text-grayscale-80">
           감상평을 남겨주세요

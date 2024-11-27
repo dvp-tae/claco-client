@@ -2,9 +2,6 @@ import { ReactComponent as BackArrow } from "@/assets/svgs/BackArrow.svg";
 import { ReactComponent as DownLoad } from "@/assets/svgs/DownLoadBox.svg";
 import { ReactComponent as DotsThree } from "@/assets/svgs/dotsthree.svg";
 import { ReactComponent as Plus } from "@/assets/svgs/plus.svg";
-import ClacoTicketImage1 from "@/assets/images/MyClacoTicket1.png";
-import ClacoTicketImage2 from "@/assets/images/MyClacoTicket2.png";
-import ClacoTicketImage3 from "@/assets/images/MyClacoTicket3.png";
 
 import { Pagination } from "swiper/modules";
 import "swiper/css";
@@ -14,48 +11,63 @@ import type { Swiper as SwiperType } from "swiper";
 
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
-import { createRef, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { createRef, useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Toast } from "@/libraries/toast/Toast";
 import { MoveModal } from "@/components/Ticket/Modal/Move";
 import { DeleteClacoTicketModal } from "@/components/Ticket/Modal/Delete/ClacoTicket";
 import { DownLoadModal } from "@/components/Ticket/Modal/DownLoad";
-
-const CLACO_IMAGE = [
-  {
-    id: 1,
-    ticketImage: ClacoTicketImage1,
-  },
-  {
-    id: 2,
-    ticketImage: ClacoTicketImage2,
-  },
-  {
-    id: 3,
-    ticketImage: ClacoTicketImage3,
-  },
-];
-const CLACOBOOK_LIST = ["내가 좋아하는 무용", "밍밍보따리", "시요밍"];
+import { useGetClacoBookList, useGetClacoTicketList } from "@/hooks/queries";
+import { ClacoBookList, ClacoTicketListResult } from "@/types";
+import showReview from "@/assets/images/showReview.png";
+import { useDeleteClacoTicket, usePutMoveClacoTicket } from "@/hooks/mutation";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDeferredLoading } from "@/hooks/utils";
 
 export const ClacoBookDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const queryParams = new URLSearchParams(location.search);
   const value = queryParams.get("title");
-
-  const ticketRefs = useRef(CLACO_IMAGE.map(() => createRef<HTMLDivElement>()));
+  const { id } = useParams();
+  const [clacoTicket, setClacoTicket] = useState<ClacoTicketListResult[]>();
+  const [ticketRefs, setTicketRefs] = useState<
+    React.RefObject<HTMLDivElement>[]
+  >([]);
   const [currentClacoBook, setCurrentClacoBook] = useState<string>("");
-  const [selectTicketIndex, setSelectTicketIndex] = useState<number>(1);
-  const [selectClacoBook, setSelectClacoBook] = useState<string>(
-    CLACOBOOK_LIST[0]
-  );
+  const [selectTicketIndex, setSelectTicketIndex] = useState<number>(0);
+  const [selectClacoBook, setSelectClacoBook] = useState<ClacoBookList>({
+    id: 0,
+    title: "",
+    color: "",
+  });
   const [isSetting, setIsSetting] = useState<boolean>(false);
   const [actionState, setActionState] = useState<
     "move" | "delete" | "download"
   >();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [toast, setToast] = useState<boolean>(false);
+  const [message, setMessage] = useState("");
+
+  const { data: clacoBookData } = useGetClacoBookList();
+  const { data: clacoTicketData, isLoading } = useGetClacoTicketList(
+    Number(id)
+  );
+
+  const { mutate: moveClacoTicket } = usePutMoveClacoTicket();
+  const { mutate: deleteClacoTicket } = useDeleteClacoTicket();
+
+  useEffect(() => {
+    if (clacoTicketData?.result.ticketList && !isLoading) {
+      setClacoTicket(clacoTicketData.result.ticketList);
+
+      setTicketRefs(
+        clacoTicketData.result.ticketList.map(() =>
+          createRef<HTMLImageElement>()
+        )
+      );
+    }
+  }, [clacoTicketData, isLoading]);
 
   useEffect(() => {
     setCurrentClacoBook(value as string);
@@ -70,20 +82,23 @@ export const ClacoBookDetailPage = () => {
   };
 
   const gotoTicketCreate = () => {
+    localStorage.setItem("clacoBookId", id?.toString() || "");
     navigate("/ticketcreate/search");
   };
 
   const onDownloadBtn = async () => {
-    const activeRef = ticketRefs.current[selectTicketIndex];
-    if (!ticketRefs.current) return;
+    if (!ticketRefs[selectTicketIndex]?.current) return;
 
     try {
-      const canvas = await html2canvas(activeRef.current!, {
+      const canvas = await html2canvas(ticketRefs[selectTicketIndex].current!, {
         scale: 2,
         backgroundColor: "#1C1C1C",
+        useCORS: true,
+        allowTaint: true,
       });
       canvas.toBlob((blob) => {
         if (blob !== null) {
+          console.log(ticketRefs[selectTicketIndex].current);
           saveAs(blob, "MyClacoTicket.png");
         }
       });
@@ -93,6 +108,17 @@ export const ClacoBookDetailPage = () => {
   };
 
   const handleModalOpen = (action: "move" | "delete" | "download") => {
+    const condition =
+      clacoBookData?.result.clacoBookList
+        .filter((book) => book.title !== value)
+        .map((book) => book.title).length === 0;
+
+    if (action === "move" && condition) {
+      setToast(true);
+      setMessage("티켓을 이동할 클라코북이 없어요");
+      setIsSetting(false);
+      return;
+    }
     setActionState(action);
     setIsSetting(false);
     setIsModalOpen(true);
@@ -104,9 +130,32 @@ export const ClacoBookDetailPage = () => {
 
   const handleConfirm = async () => {
     if (actionState === "move") {
-      console.log(selectClacoBook);
+      const clacoBookId = selectClacoBook.id;
+      const ticketReviewId = clacoTicket && clacoTicket[selectTicketIndex].id;
+      moveClacoTicket(
+        {
+          clacoBookId: clacoBookId as number,
+          ticketReviewId: ticketReviewId as number,
+        },
+        {
+          onSuccess: () => {
+            setMessage("티켓이 이동이 완료되었어요");
+          },
+          onError: (error) => {
+            console.error(error);
+          },
+        }
+      );
     } else if (actionState === "delete") {
-      console.log(selectTicketIndex);
+      const ticketReviewId = clacoTicket && clacoTicket[selectTicketIndex].id;
+      deleteClacoTicket(ticketReviewId as number, {
+        onSuccess: () => {
+          setMessage("티켓이 삭제되었어요");
+        },
+        onError: (error) => {
+          console.error(error);
+        },
+      });
     } else {
       onDownloadBtn();
     }
@@ -117,6 +166,19 @@ export const ClacoBookDetailPage = () => {
   const handleSlideChange = (swiper: SwiperType) => {
     setSelectTicketIndex(swiper.activeIndex);
   };
+
+  const { shouldShowSkeleton } = useDeferredLoading(isLoading);
+
+  if (shouldShowSkeleton) {
+    return (
+      <div className="relative flex flex-col pt-[46px] items-center justify-center px-6">
+        <div className="flex justify-center items-center w-full mb-[56px] h-[26px]">
+          <Skeleton className="w-[86px] h-[36px]" />
+        </div>
+        <Skeleton className="w-[241px] h-[531px]" />
+      </div>
+    );
+  }
 
   return (
     <div className="relative flex flex-col pt-[46px] items-center justify-center px-6">
@@ -149,12 +211,76 @@ export const ClacoBookDetailPage = () => {
         </>
       ) : null}
 
+      <div className="clacobook pb-[185px]">
+        {clacoTicket?.length === 0 ? (
+          <>
+            <div className="flex flex-col items-center justify-center mt-[100px]">
+              <span className="heading2-bold text-grayscale-80">
+                공연은 즐겁게 관람하셨나요?
+              </span>
+              <div className="relative flex items-center justify-center">
+                <img
+                  src={showReview}
+                  alt="showReview"
+                  className="object-contain mb-[53px]"
+                />
+                <div className="absolute bottom-0 flex text-center">
+                  <span className="body2-regular text-grayscale-70 mb-[39px]">
+                    티켓북에 공연 감상을 등록하고
+                    <br />
+                    나만의 티켓을 만들어보세요!
+                  </span>
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <Swiper
+              pagination={true}
+              modules={[Pagination]}
+              spaceBetween={213}
+              onSlideChange={handleSlideChange}
+              onSwiper={(swiper) => {
+                setSelectTicketIndex(swiper.activeIndex);
+              }}
+              className="max-w-[240px] h-[569px] rounded-[5px] flex justify-center items-center"
+            >
+              {clacoTicket &&
+                clacoTicket.map((image, index) => (
+                  <SwiperSlide key={index}>
+                    <div ref={ticketRefs[index]}>
+                      <img
+                        src={image.ticketImage}
+                        alt="클라코 티켓 이미지"
+                        className="w-[240px] h-[530px]"
+                        crossOrigin="anonymous"
+                        onClick={() => gotoTicketDetail(image.id)}
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+            </Swiper>
+          </>
+        )}
+        <div
+          className="absolute bottom-[57px] right-[26px] w-[70px] h-[70px] bg-primary rounded-full flex justify-center items-center"
+          onClick={gotoTicketCreate}
+        >
+          <Plus viewBox="0 0 22 22" width={40} height={40} />
+        </div>
+      </div>
+
       {/* 모달 컴포넌트 영역 */}
       {isModalOpen && (
         <>
           {actionState === "move" ? (
             <MoveModal
-              clacoBookList={CLACOBOOK_LIST}
+              clacoBookList={
+                clacoBookData?.result.clacoBookList.filter(
+                  (book) => book.title !== value
+                ) ?? []
+              }
               onClose={handleCloseModal}
               onConfirm={handleConfirm}
               onSelect={setSelectClacoBook}
@@ -174,53 +300,7 @@ export const ClacoBookDetailPage = () => {
       )}
 
       {/* 토스트 영역 */}
-      {toast && (
-        <Toast
-          setToast={setToast}
-          message={
-            actionState === "move"
-              ? "티켓이 이동이 완료되었어요"
-              : actionState === "delete"
-                ? "티켓이 삭제되었어요"
-                : "티켓 다운이 완료되었어요"
-          }
-        />
-      )}
-
-      <div className="clacobook pb-[185px]">
-        <Swiper
-          pagination={true}
-          modules={[Pagination]}
-          spaceBetween={213}
-          onSlideChange={handleSlideChange}
-          onSwiper={(swiper) => {
-            setSelectTicketIndex(swiper.activeIndex);
-          }}
-          className="max-w-[240px] h-[569px] rounded-[5px] flex justify-center items-center"
-        >
-          {CLACO_IMAGE.map((image, index) => (
-            <SwiperSlide key={image.id}>
-              <div
-                className="w-[240px] h-[530px]"
-                ref={ticketRefs.current[index]}
-                onClick={() => gotoTicketDetail(image.id)}
-              >
-                <img
-                  src={image.ticketImage}
-                  alt="클라코 티켓 이미지"
-                  className="w-[240px] h-[530px]"
-                />
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
-      <div
-        className="absolute bottom-[57px] right-[26px] w-[70px] h-[70px] bg-primary rounded-full flex justify-center items-center"
-        onClick={gotoTicketCreate}
-      >
-        <Plus viewBox="0 0 22 22" width={40} height={40} />
-      </div>
+      {toast && <Toast setToast={setToast} message={message} />}
     </div>
   );
 };

@@ -1,12 +1,13 @@
 import { Modal } from "@/components/common/Modal";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ClacoBookList } from "@/types";
 import { useState } from "react";
 
 export type MoveModalProps = {
-  clacoBookList: string[];
+  clacoBookList: ClacoBookList[];
   onClose: () => void;
   onConfirm: () => void;
-  onSelect: React.Dispatch<React.SetStateAction<string>>;
+  onSelect: React.Dispatch<React.SetStateAction<ClacoBookList>>;
 };
 
 export const MoveModal = ({
@@ -39,16 +40,16 @@ export const MoveModal = ({
         </div>
       ) : (
         <div className="flex flex-col mb-[25px]">
-          <RadioGroup defaultValue={clacoBookList[0]}>
+          <RadioGroup>
             {clacoBookList.map((item, index) => (
               <div className="flex items-center space-x-2 mb-[5px]" key={index}>
                 <RadioGroupItem
-                  value={item}
+                  value={item.title}
                   id={String(index)}
-                  onClick={() => onSelect(item)}
+                  onClick={() => onSelect(item as ClacoBookList)}
                   className="mr-[10px] border-grayscale-50 text-grayscale-50"
                 />
-                <label htmlFor={String(index)}>{item}</label>
+                <label htmlFor={String(index)}>{item.title}</label>
               </div>
             ))}
           </RadioGroup>

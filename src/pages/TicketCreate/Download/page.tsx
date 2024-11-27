@@ -1,27 +1,28 @@
 import { Progress } from "@/components/ui/progress";
-import { ReactComponent as BackArrow } from "@/assets/svgs/BackArrow.svg";
 import { ReactComponent as Download } from "@/assets/svgs/download.svg";
 import { useNavigate } from "react-router-dom";
 import { ClacoTicket } from "@/components/common/ClacoTicket";
-import { REVIEW_MOCK_DATA_type } from "@/components/Main/Analysis/TicketRecommend";
 import { useEffect, useRef, useState } from "react";
 import html2canvas from "html2canvas";
-import { saveAs } from "file-saver";
 import { Toast } from "@/libraries/toast/Toast";
 import { DownLoadModal } from "@/components/Ticket/Modal/DownLoad";
-
-const REVIEW_MOCK_DATA: REVIEW_MOCK_DATA_type = {
-  title: "히사이시조",
-  username: "밍밍보따리",
-  review:
-    "전문 무용수들의 실력이 눈부시게 빛났습니다. 지젤 역을 맡은 발레리나의 날렵한 동작과 뛰어난 연기는 보는 이의 마음을 울렸습니다. 특히, 2막의 윌리들의 군무는 환상적이었고, 유령들의 통일성이 돋보였습니다. 모든 출연진이 하나가 되어 춤출 때, 진한 감동이 전해졌습니다.",
-};
+import { usePutTicketImage } from "@/hooks/mutation";
+import useGetTicketReviewDetail from "@/hooks/queries/useGetTicketReviewDetail";
+import usePostShowPoster from "@/hooks/mutation/usePostShowPoster";
 
 export const TicketDownloadPage = () => {
   const navigate = useNavigate();
   const ticketRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [toast, setToast] = useState<boolean>(false);
+  const [posterImage, setPosterImage] = useState<string>("");
+
+  const { mutate: uploadTicketImage, data: ticketData } = usePutTicketImage();
+  const { mutate: uploadPosterImage, data: posterData } = usePostShowPoster();
+  const ticketReviewId = Number(localStorage.getItem("ticketReviewId"));
+  const { data, isLoading } = useGetTicketReviewDetail(ticketReviewId);
+  const ticketReviewDetail = data?.result;
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const convertToImageAndUpload = async () => {
     if (!ticketRef.current) return;
@@ -39,27 +40,50 @@ export const TicketDownloadPage = () => {
         canvas.toBlob((blob) => resolve(blob!), "image/png", 1.0);
       });
 
-      const formData = new FormData();
-      formData.append("ticket", blob, "ticket.png");
-
-      for (const i of formData.entries()) {
-        console.log(i);
+      if (!blob) {
+        throw new Error("이미지 Blob 생성에 실패했습니다.");
       }
+
+      uploadTicketImage({
+        id: ticketReviewId,
+        file: new File([blob], "ticket.png", { type: "image/png" }),
+      });
+
+      setIsChecked(true);
     } catch (error) {
       console.error("티켓 이미지 변환/업로드 실패:", error);
     }
   };
 
   useEffect(() => {
-    convertToImageAndUpload();
-  }, []);
+    const posterUrl = localStorage.getItem("poster") || "";
+    const formattedUrl = posterUrl.replace(/^"|"$/g, "");
 
-  const handleBackClick = () => {
-    navigate("/show/1/reviews/1");
-  };
+    if (formattedUrl) {
+      uploadPosterImage({ image_url: formattedUrl });
+    }
+  }, [uploadPosterImage]);
+
+  useEffect(() => {
+    if (posterData?.s3_url) {
+      setPosterImage(posterData.s3_url);
+    }
+  }, [posterData]);
+
+  useEffect(() => {
+    if (!isLoading && ticketReviewDetail) {
+      const timer = setTimeout(() => {
+        convertToImageAndUpload();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, ticketReviewDetail]);
 
   const handleConfirmClick = () => {
-    navigate("/ticketbook/1");
+    navigate(`/ticketbook`);
+    localStorage.removeItem("clacoBookId");
+    localStorage.removeItem("poster");
+    localStorage.removeItem("showId");
   };
 
   const handleModalOpen = () => {
@@ -70,40 +94,35 @@ export const TicketDownloadPage = () => {
     setIsModalOpen(false);
   };
 
+  const DataUrl = (url: string) => {
+    return fetch(url)
+      .then((response) => {
+        return response.blob();
+      })
+      .then((blob) => {
+        return URL.createObjectURL(blob);
+      });
+  };
   const onDownloadBtn = async () => {
-    if (!ticketRef.current) return;
+    const a = document.createElement("a");
+    a.href = await DataUrl(ticketData?.result.imageUrl || "");
+    a.download = "MyClacoTicket.png";
 
-    try {
-      const canvas = await html2canvas(ticketRef.current!, {
-        scale: 2,
-        backgroundColor: "#1C1C1C",
-      });
-      canvas.toBlob((blob) => {
-        if (blob !== null) {
-          saveAs(blob, "MyClacoTicket.png");
-          setToast(true);
-        }
-      });
-    } catch (error) {
-      console.error("Error converting div to image:", error);
-    }
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    setToast(true);
     handleCloseModal();
   };
 
   return (
     <div className="flex flex-col pt-[46px] pb-[67px]">
       <div className="px-[24px]">
-        <div className="flex items-center justify-between mb-[33px]">
-          <BackArrow
-            width="9"
-            height="18"
-            viewBox="0 0 11 20"
-            onClick={handleBackClick}
-            className="mr-4"
-          />
+        <div className="relative text-center items-center mb-[33px]">
           <span className="headline2-bold text-grayscale-80">티켓 저장</span>
           <span
-            className="body1-medium text-grayscale-80"
+            className="absolute top-0 right-0 body1-medium text-grayscale-80"
             onClick={handleConfirmClick}
           >
             완료
@@ -118,18 +137,30 @@ export const TicketDownloadPage = () => {
         </div>
         <div className="mb-[24px] flex items-center justify-center mt-[31px] relative overflow-hidden">
           <div ref={ticketRef} className="z-10">
-            <ClacoTicket data={REVIEW_MOCK_DATA} />
+            {isChecked ? (
+              <img
+                src={ticketData?.result.imageUrl}
+                alt="ticket.png"
+                className="w-[213px] h-[471px] z-10"
+                crossOrigin="anonymous"
+              />
+            ) : (
+              <ClacoTicket
+                concertPoster={posterImage}
+                watchDate={ticketReviewDetail?.watchDate || ""}
+                concertName={ticketReviewDetail?.concertName || ""}
+                concertTags={ticketReviewDetail?.concertTags || []}
+              />
+            )}
           </div>
           <div className="absolute bottom-0 w-screen h-[269px] bg-gradient-to-t from-[#DB5F35]/30 to-[#F7B29D]/0" />
         </div>
-        <div className="flex items-center justify-center border border-grayscale-80 rounded-[5px] mx-[24px] px-[120px] py-4 gap-[10px] cursor-pointer">
+        <div
+          className="flex items-center justify-center border border-grayscale-80 rounded-[5px] mx-[24px] px-[120px] py-4 gap-[10px] cursor-pointer"
+          onClick={handleModalOpen}
+        >
           <Download />
-          <span
-            className="caption-12 text-grayscale-80"
-            onClick={handleModalOpen}
-          >
-            이미지 다운로드
-          </span>
+          <span className="caption-12 text-grayscale-80">이미지 다운로드</span>
           {isModalOpen && (
             <DownLoadModal
               onClose={handleCloseModal}

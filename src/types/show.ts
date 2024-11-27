@@ -26,14 +26,13 @@ export type ShowFilterProps = {
   ) => void;
 };
 
+export type ClacoPickProps = {
+  pickData: ConcertBased[];
+};
+
 export type ClacoPickShowProps = {
   imageSrc: string;
   title: string;
-};
-
-export type ClacoPickProps = {
-  userName: string;
-  picks: { imageSrc: string; title: string }[];
 };
 
 export type TabMenuItem = {
@@ -115,5 +114,14 @@ export type ConcertBasedResponse = {
   code: string;
   message: string;
   result: ConcertBased[];
+  refreshed: boolean;
+};
+
+export type GetConcertReviewSizeResponse = {
+  code: string;
+  message: string;
+  result: {
+    total: number;
+  };
   refreshed: boolean;
 };

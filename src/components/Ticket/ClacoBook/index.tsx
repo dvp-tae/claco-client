@@ -36,6 +36,7 @@ export const ClacoBook = ({ data, isEditing, children }: ClacoBookProps) => {
         src={clacoBookImage}
         alt="클라코북 이미지"
         className="w-[342px] h-[212px] object-contain"
+        loading="lazy"
       />
     </div>
   );

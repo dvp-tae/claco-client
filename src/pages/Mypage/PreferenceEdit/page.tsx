@@ -5,16 +5,38 @@ import { Concept } from "@/components/common/Concept";
 import { Gender } from "@/components/common/Gender";
 import { Location } from "@/components/common/Location";
 import { Price } from "@/components/common/Price";
-import { SettingsProps } from "@/types";
-import { useState } from "react";
+import usePutUserPreference from "@/hooks/mutation/usePutUserPreference";
+import { useGetUserPreferences } from "@/hooks/queries";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const PreferenceSettings = ({ onBack, onClick }: SettingsProps) => {
-  const [selectedGender, setSelectedGender] = useState<string | null>(null);
+export const PreferenceEditPage = () => {
+  const [selectedGender, setSelectedGender] = useState<string>("");
   const [selectedAge, setSelectedAge] = useState<number | null>(null);
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(1000000);
   const [selectedLocation, setSelectedLocation] = useState<string[]>([]);
   const [selectedConcepts, setSelectedConcepts] = useState<string[]>([]);
+  const { data, isLoading } = useGetUserPreferences();
+  const preferenceData = data?.result;
+  const { mutate: uploadPreference } = usePutUserPreference();
+
+  useEffect(() => {
+    if (!isLoading && preferenceData) {
+      setSelectedGender(preferenceData.gender);
+      setSelectedAge(preferenceData.age);
+      setMinPrice(preferenceData.minPrice);
+      setMaxPrice(preferenceData.maxPrice);
+      setSelectedLocation(
+        preferenceData.preferRegions.map((region) => region.preferenceRegion),
+      );
+      setSelectedConcepts(
+        preferenceData.preferTypes.map((type) => type.preferenceType),
+      );
+    }
+  }, [isLoading, data]);
+
+  const navigate = useNavigate();
 
   const handleGenderClick = (gender: string) => {
     setSelectedGender(gender);
@@ -40,14 +62,37 @@ export const PreferenceSettings = ({ onBack, onClick }: SettingsProps) => {
     }
   };
 
-  const handleConfirmClick = () => {};
+  const handleConfirmClick = () => {
+    const requestPayload = {
+      gender: selectedGender || "",
+      age: selectedAge || 10,
+      minPrice: minPrice,
+      maxPrice: maxPrice,
+      regionPreferences: selectedLocation.map((location) => ({
+        preferenceRegion: location,
+      })),
+      typePreferences: selectedConcepts.map((concept) => ({
+        preferenceType: concept,
+      })),
+    };
+
+    try {
+      uploadPreference(requestPayload);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const gotoBack = () => {
+    navigate("/mypage");
+  };
 
   return (
-    <div className="pb-[52px]">
+    <div className="px-[24px] pt-[46px] pb-[100px]">
       <div className="relative flex items-center justify-center">
         <BackArrow
           className="absolute left-0 cursor-pointer"
-          onClick={onBack}
+          onClick={gotoBack}
         />
         <span className="headline2-bold text-grayscale-80">
           나의 취향 정보 수정
@@ -101,7 +146,6 @@ export const PreferenceSettings = ({ onBack, onClick }: SettingsProps) => {
           !!selectedConcepts
         }
         onClick={() => {
-          onClick();
           handleConfirmClick();
         }}
         disabled={

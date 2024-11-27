@@ -270,3 +270,7 @@ input[type="range"]::-webkit-slider-thumb {
 .slide-up {
   animation: slideUp 1s ease-out;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

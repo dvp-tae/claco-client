@@ -21,7 +21,7 @@ const useGetAutoCompleteSearch = (
   query: string
 ): UseQueryResult<AutoCompleteSearchResponse, AxiosError> => {
   return useQuery<AutoCompleteSearchResponse, AxiosError>({
-    queryKey: ["userPreferences", query],
+    queryKey: ["useAutoComplete", query],
     queryFn: () => getAutoCompleteSearch(query),
     enabled: query.trim().length !== 0,
   });

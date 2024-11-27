@@ -4,7 +4,12 @@ import ShowEssentials from "@/components/ShowDetail/ShowInformation/ShowEssentia
 import ShowOverview from "@/components/ShowDetail/ShowInformation/ShowOverview";
 import ShowPoster from "@/components/ShowDetail/ShowInformation/ShowPoster";
 import useGetShowDetail from "@/hooks/queries/useGetShowDetail";
-import { extractDateRange, extractPricesWithSeats, extractSchedule, timeToMinutes } from "@/hooks/utils";
+import {
+  extractDateRange,
+  extractPricesWithSeats,
+  extractSchedule,
+  timeToMinutes,
+} from "@/hooks/utils";
 import { useRef, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
@@ -37,7 +42,7 @@ export const ShowDetailPage = () => {
           });
         },
         {
-          threshold: sectionId === "상세정보" && showFullImage ? 0.3 : 0.8,
+          threshold: sectionId === "상세정보" && showFullImage ? 0.2 : 0.7,
         },
       );
 
@@ -104,7 +109,10 @@ export const ShowDetailPage = () => {
     showDetail?.pcseguidance || "",
   );
 
-  const displayedPrice = (minPrice: number | string | null, maxPrice: number | string | null): string => {
+  const displayedPrice = (
+    minPrice: number | string | null,
+    maxPrice: number | string | null,
+  ): string => {
     if (minPrice === "무료" && maxPrice === "무료") {
       return "무료";
     }
@@ -115,7 +123,6 @@ export const ShowDetailPage = () => {
     }
     return "가격 정보 없음";
   };
-
 
   if (isLoading) {
     return <div>로딩중</div>;
@@ -130,7 +137,9 @@ export const ShowDetailPage = () => {
         prfnm={showDetail?.prfnm || "공연 이름 없음"}
         poster={showDetail?.poster || ""}
         area={showDetail?.area || "공연 장소 정보 없음"}
-        prfruntime={timeToMinutes(showDetail?.prfruntime || "러닝타임 정보 없음")}
+        prfruntime={timeToMinutes(
+          showDetail?.prfruntime || "러닝타임 정보 없음",
+        )}
         prfage={showDetail?.prfage || "연령 제한 정보 없음"}
         prfdate={extractDateRange(
           showDetail?.prfpdfrom || "",
@@ -167,7 +176,9 @@ export const ShowDetailPage = () => {
       <div ref={showInfoRef} data-section-id="공연 정보">
         <ShowEssentials
           fcltynm={showDetail?.fcltynm || "공연 장소 정보 없음"}
-          prfruntime={timeToMinutes(showDetail?.prfruntime || "러닝타임 정보 없음")}
+          prfruntime={timeToMinutes(
+            showDetail?.prfruntime || "러닝타임 정보 없음",
+          )}
           prfdate={extractDateRange(
             showDetail?.prfpdfrom || "",
             showDetail?.prfpdto || "",
@@ -185,7 +196,9 @@ export const ShowDetailPage = () => {
         />
       </div>
       <div ref={reviewRef} data-section-id="감상 리뷰">
-        <AudienceReviews reviews={showDetail?.ticketReviewSimpleResponses || []} />
+        <AudienceReviews
+          reviews={showDetail?.ticketReviewSimpleResponses || []}
+        />
       </div>
 
       <div ref={relatedShowsRef}>

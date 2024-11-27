@@ -1,9 +1,12 @@
+import { ShowTimesByDate } from "@/hooks/utils/extractShowTime";
+
 export type CalendarProps = {
   mode?: "single" | "range";
   selectedDate?: Date | null;
   onDateSelect?: (date: Date) => void;
-  startDate?: Date;
-  endDate?: Date;
+  showTimesByDate?: ShowTimesByDate;
+  startYear?: number;
+  startMonth?: number;
   rangeStart?: Date | null;
   rangeEnd?: Date | null;
   onRangeSelect?: (start: Date, end: Date) => void;

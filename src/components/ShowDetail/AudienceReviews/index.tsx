@@ -19,7 +19,7 @@ const AudienceReviews = forwardRef<HTMLDivElement, AudienceReviewsProps>(
     return (
       <section ref={ref}>
         <div className="px-6">
-          <div className="space-x-[14px] mb-6">
+          <div className="flex items-center space-x-[14px] mb-[26px]">
             <span className="headline2-bold text-grayscale-80">감상 리뷰</span>
             <div
               className="caption-12 text-grayscale-60 underline"

@@ -1,10 +1,13 @@
 import { ReactComponent as BackArrow } from "@/assets/svgs/BackArrow.svg";
-import { PreferenceAnalysisProps } from "@/types";
 import { ClacoAnalysisCard } from "@/components/common/ClacoAnalysisCard";
+import { useNavigate } from "react-router-dom";
 
-export const PreferenceAnalysis = ({
-  onSettingsOpen,
-}: PreferenceAnalysisProps) => {
+export const PreferenceAnalysis = () => {
+  const navigate = useNavigate();
+
+  const gotoPreference = () => {
+    navigate("/mypage/preference");
+  };
   return (
     <div className="min-h-screen flex flex-col pb-[79px]">
       <ClacoAnalysisCard type="mypage" />
@@ -13,7 +16,7 @@ export const PreferenceAnalysis = ({
         <span className="text-white headline2-bold">나의 취향 정보 수정</span>
         <BackArrow
           className="rotate-180 cursor-pointer"
-          onClick={onSettingsOpen}
+          onClick={gotoPreference}
         />
       </div>
     </div>

@@ -3,10 +3,6 @@ export type SettingsProps = {
   onClick: () => void;
 };
 
-export type PreferenceAnalysisProps = {
-  onSettingsOpen: () => void;
-};
-
 export type PreferRegion = {
   preferenceRegion: string;
 };
@@ -20,7 +16,7 @@ export type PreferType = {
 };
 
 export type UserPreferenceResult = {
-  gender: "MALE" | "FEMALE";
+  gender: string;
   age: number;
   minPrice: number;
   maxPrice: number;
@@ -33,6 +29,22 @@ export type UserPreferencesResponse = {
   code: string;
   message: string;
   result: UserPreferenceResult;
+};
+
+export type UserPreferencesPutRequest = {
+  gender: string;
+  age: number;
+  minPrice: number;
+  maxPrice: number;
+  regionPreferences: PreferRegion[];
+  typePreferences: PreferType[];
+};
+
+export type UserPreferencesPutResponse = {
+  code: string;
+  message: string;
+  result: UserPreferenceResult;
+  refreshed: boolean;
 };
 
 export type UserBased = {
@@ -73,18 +85,22 @@ export type UserItemBasedResponse = {
   refreshed: boolean;
 };
 
+export type TicketInfoResponse = {
+  id: number;
+  ticketImage: string;
+};
+
+export type TicketReviewSummary = {
+  nickName: string;
+  concertName: string;
+  concertId: number;
+  createdAt: string;
+  content: string;
+};
+
 export type UserRecClacoTicket = {
-  ticketInfoResponse: {
-    id: number;
-    ticketImage: string;
-  };
-  ticketReviewSummary: {
-    "사용자 닉네임": string;
-    "공연 제목": string;
-    "공연 아이디": number;
-    "티켓 등록 날짜(관람 날짜)": string;
-    "리뷰 내용": string;
-  };
+  ticketInfoResponse: TicketInfoResponse;
+  ticketReviewSummary: TicketReviewSummary;
 };
 
 export type UserRecClacoTicketResponse = {
