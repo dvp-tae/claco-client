@@ -56,8 +56,11 @@ export const ClacoTicketDetailPage = () => {
   const gotoBack = () => {
     const id = localStorage.getItem("prevTicketBookId");
     const title = localStorage.getItem("prevClacoBookTitle");
-    navigate(`/ticketbook/${id}?title=${title}`);
-    // navigate(-1);
+    if (id || title) {
+      navigate(`/ticketbook/${id}?title=${title}`);
+    } else {
+      navigate(-1);
+    }
   };
 
   const gotoTicketReviewEdit = () => {
