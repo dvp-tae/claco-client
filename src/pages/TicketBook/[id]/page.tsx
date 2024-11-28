@@ -188,22 +188,35 @@ export const ClacoBookDetailPage = () => {
   if (!isLoading && clacoTicket?.length === 0) {
     return (
       <>
-        <div className="flex flex-col items-center justify-center mt-[100px]">
-          <span className="heading2-bold text-grayscale-80">
-            공연은 즐겁게 관람하셨나요?
-          </span>
-          <div className="relative flex items-center justify-center">
-            <img
-              src={showReview}
-              alt="showReview"
-              className="object-contain mb-[53px]"
-            />
-            <div className="absolute bottom-0 flex text-center">
-              <span className="body2-regular text-grayscale-70 mb-[39px]">
-                티켓북에 공연 감상을 등록하고
-                <br />
-                나만의 티켓을 만들어보세요!
-              </span>
+        <div className="relative flex flex-col pt-[46px] items-center justify-center px-6">
+          <div className="flex justify-center items-center w-full mb-[56px] h-[26px]">
+            <span className="headline2-bold text-grayscale-80">
+              {currentClacoBook}
+            </span>
+          </div>
+          <div className="flex flex-col items-center justify-center mt-[100px]">
+            <span className="heading2-bold text-grayscale-80">
+              공연은 즐겁게 관람하셨나요?
+            </span>
+            <div className="relative flex items-center justify-center">
+              <img
+                src={showReview}
+                alt="showReview"
+                className="object-contain mb-[53px]"
+              />
+              <div className="absolute bottom-0 flex text-center">
+                <span className="body2-regular text-grayscale-70 mb-[39px]">
+                  티켓북에 공연 감상을 등록하고
+                  <br />
+                  나만의 티켓을 만들어보세요!
+                </span>
+              </div>
+              <div
+                className="absolute bottom-[57px] right-[26px] w-[70px] h-[70px] bg-primary rounded-full flex justify-center items-center"
+                onClick={gotoTicketCreate}
+              >
+                <Plus viewBox="0 0 22 22" width={40} height={40} />
+              </div>
             </div>
           </div>
         </div>
