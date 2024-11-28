@@ -24,7 +24,7 @@ export type PriceProps = {
 export type LocationProps = {
   selectedLocation: string[];
   onLocationFilterClick?: (value: string[], label: string) => void;
-  onLocationClick?: (label: string) => void;
+  onLocationClick?: (location: string) => void;
   isFilter?: boolean;
 };
 

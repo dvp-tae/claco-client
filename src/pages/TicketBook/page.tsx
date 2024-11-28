@@ -128,6 +128,7 @@ export const ClacoBookPage = () => {
 
   const { shouldShowSkeleton } = useDeferredLoading(isLoading);
 
+  // 데이터 로딩 중일 때는 스켈레톤 UI
   if (shouldShowSkeleton) {
     return (
       <div className="flex flex-col pt-[46px] items-center justify-center px-6">
@@ -140,6 +141,45 @@ export const ClacoBookPage = () => {
           {Array.from(Array(5).keys()).map((_, index) => (
             <Skeleton key={index} className="w-[342px] h-[212px]" />
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  // 데이터 로딩이 완료되고 데이터가 없을 때만 빈 상태 UI
+  if (!isLoading && clacoBookList.length === 0) {
+    return (
+      <div className="flex flex-col pt-[46px] items-center justify-center px-6">
+        <span className="headline2-bold text-grayscale-80 mb-[152px] h-[26px]">
+          티켓북
+        </span>
+        <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center">
+            <span className="heading2-bold text-grayscale-80">
+              공연은 즐겁게 관람하셨나요?
+            </span>
+            <div className="relative flex items-center justify-center">
+              <img
+                src={showReview}
+                alt="showReview"
+                className="object-contain mb-[53px]"
+              />
+              <div className="absolute bottom-0 flex text-center">
+                <span className="body2-regular text-grayscale-70 mb-[39px]">
+                  티켓북에 공연 감상을 등록하고
+                  <br />
+                  나만의 티켓을 만들어보세요!
+                </span>
+              </div>
+            </div>
+
+            <a
+              href="/ticketcreate/search"
+              className="rounded-[5px] px-[89px] py-[14px] text-center bg-grayscale-30 text-grayscale-80 cursor-pointer"
+            >
+              나만의 티켓 만들러 가기
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -186,91 +226,61 @@ export const ClacoBookPage = () => {
           )}
         </div>
       )}
-
-      {clacoBookList.length !== 0 ? (
-        <>
-          <div className="pb-[100px]">
-            <RadioGroup
-              defaultValue={String(selectClacoBook?.id)}
-              className="flex flex-col gap-[35px]"
-            >
-              {clacoBookList.map((book) => (
-                <div
-                  key={book.id}
-                  onClick={() => {
-                    if (!isEditing) {
-                      handleClacoBookDetail(book.id as number, book.title);
-                    }
-                  }}
-                >
-                  <ClacoBook data={book} isEditing={isEditing}>
-                    <RadioGroupItem
-                      value={String(book.id)}
-                      id={String(book.id)}
-                      onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        setSelectClacoBook(book);
-                      }}
-                    />
-                  </ClacoBook>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-
-          {/* 모달 영역 */}
-          {isModalOpen && (
-            <>
-              {action === "delete" && selectClacoBook ? (
-                <DeleteClacoBookModal
-                  clacoBook={selectClacoBook}
-                  onClose={handleCloseModal}
-                  onConfirm={handleDelete}
-                />
-              ) : (
-                <CreateEditModal
-                  clacoBook={action === "edit" ? selectClacoBook : null}
-                  action={action}
-                  onClose={handleCloseModal}
-                  onConfirm={
-                    action == "add" ? handleConfirmCreate : handleConfirmEdit
-                  }
-                />
-              )}
-            </>
-          )}
-
-          {/* 토스트 영역 */}
-          {toast && <Toast setToast={setToast} message={message} />}
-        </>
-      ) : (
-        <div className="flex flex-col items-center justify-center">
-          <span className="heading2-bold text-grayscale-80">
-            공연은 즐겁게 관람하셨나요?
-          </span>
-          <div className="relative flex items-center justify-center">
-            <img
-              src={showReview}
-              alt="showReview"
-              className="object-contain mb-[53px]"
-            />
-            <div className="absolute bottom-0 flex text-center">
-              <span className="body2-regular text-grayscale-70 mb-[39px]">
-                티켓북에 공연 감상을 등록하고
-                <br />
-                나만의 티켓을 만들어보세요!
-              </span>
-            </div>
-          </div>
-
-          <a
-            href="/ticketcreate/search"
-            className="rounded-[5px] px-[89px] py-[14px] text-center bg-grayscale-30 text-grayscale-80 cursor-pointer"
+      <>
+        <div className="pb-[100px]">
+          <RadioGroup
+            defaultValue={String(selectClacoBook?.id)}
+            className="flex flex-col gap-[35px]"
           >
-            나만의 티켓 만들러 가기
-          </a>
+            {clacoBookList.map((book) => (
+              <div
+                key={book.id}
+                onClick={() => {
+                  if (!isEditing) {
+                    handleClacoBookDetail(book.id as number, book.title);
+                  }
+                }}
+              >
+                <ClacoBook data={book} isEditing={isEditing}>
+                  <RadioGroupItem
+                    value={String(book.id)}
+                    id={String(book.id)}
+                    onClick={(e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      setSelectClacoBook(book);
+                    }}
+                  />
+                </ClacoBook>
+              </div>
+            ))}
+          </RadioGroup>
         </div>
-      )}
+
+        {/* 모달 영역 */}
+        {isModalOpen && (
+          <>
+            {action === "delete" && selectClacoBook ? (
+              <DeleteClacoBookModal
+                clacoBook={selectClacoBook}
+                onClose={handleCloseModal}
+                onConfirm={handleDelete}
+              />
+            ) : (
+              <CreateEditModal
+                clacoBook={action === "edit" ? selectClacoBook : null}
+                action={action}
+                onClose={handleCloseModal}
+                onConfirm={
+                  action == "add" ? handleConfirmCreate : handleConfirmEdit
+                }
+              />
+            )}
+          </>
+        )}
+
+        {/* 토스트 영역 */}
+        {toast && <Toast setToast={setToast} message={message} />}
+      </>
     </div>
   );
 };

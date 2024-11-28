@@ -155,6 +155,7 @@ export const ShowFilter = ({ onClose, onApply }: ShowFilterProps) => {
           <Location
             selectedLocation={selectedLocation}
             onLocationFilterClick={handleLocationClick}
+            isFilter={true}
           />
         </div>
         <div className="flex flex-col mb-[58px] gap-8">

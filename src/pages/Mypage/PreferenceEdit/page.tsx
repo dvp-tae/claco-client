@@ -28,10 +28,10 @@ export const PreferenceEditPage = () => {
       setMinPrice(preferenceData.minPrice);
       setMaxPrice(preferenceData.maxPrice);
       setSelectedLocation(
-        preferenceData.preferRegions.map((region) => region.preferenceRegion),
+        preferenceData.preferRegions.map((region) => region.preferenceRegion)
       );
       setSelectedConcepts(
-        preferenceData.preferTypes.map((type) => type.preferenceType),
+        preferenceData.preferTypes.map((type) => type.preferenceType)
       );
     }
   }, [isLoading, data]);
@@ -47,11 +47,12 @@ export const PreferenceEditPage = () => {
   };
 
   const handleLocationClick = (location: string) => {
-    if (selectedLocation.includes(location)) {
-      setSelectedLocation(selectedLocation.filter((loc) => loc !== location));
-    } else {
-      setSelectedLocation([...selectedLocation, location]);
-    }
+    setSelectedLocation((prev) => {
+      if (prev.includes(location)) {
+        return prev.filter((loc) => loc !== location);
+      }
+      return [...prev, location];
+    });
   };
 
   const handleConceptClick = (concept: string) => {
@@ -127,6 +128,7 @@ export const PreferenceEditPage = () => {
         <Location
           selectedLocation={selectedLocation}
           onLocationClick={handleLocationClick}
+          isFilter={false}
         />
       </div>
       <div className="mb-[74px]">

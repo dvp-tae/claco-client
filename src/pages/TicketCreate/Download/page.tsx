@@ -19,7 +19,7 @@ export const TicketDownloadPage = () => {
   const [loadingState, setLoadingState] = useState<boolean>(true);
   const posterUrl = (localStorage.getItem("poster") || "").replace(
     /^"|"$/g,
-    ""
+    "",
   );
 
   const { mutate: uploadTicketImage, data: ticketData } = usePutTicketImage();
@@ -74,7 +74,7 @@ export const TicketDownloadPage = () => {
           onSuccess: () => {
             setIsChecked(true);
           },
-        }
+        },
       );
     } catch (error) {
       console.error("티켓 이미지 변환/업로드 실패:", error);
@@ -186,17 +186,15 @@ export const TicketDownloadPage = () => {
         >
           <Download />
           <span className="caption-12 text-grayscale-80">이미지 다운로드</span>
-          {isModalOpen && (
-            <DownLoadModal
-              onClose={handleCloseModal}
-              onConfirm={onDownloadBtn}
-            />
-          )}
 
           {toast && (
             <Toast setToast={setToast} message={"티켓 다운이 완료되었어요"} />
           )}
         </div>
+
+        {isModalOpen && (
+          <DownLoadModal onClose={handleCloseModal} onConfirm={onDownloadBtn} />
+        )}
       </div>
     </div>
   );

@@ -64,6 +64,7 @@ const routes: RouteObject[] = [
           { path: RoutePath.Main, element: <MainPage /> },
           { path: RoutePath.Browse, element: <BrowsePage /> },
           { path: RoutePath.TicketBook, element: <ClacoBookPage /> },
+          { path: RoutePath.MyPage, element: <MyPage /> },
         ],
       },
       {
@@ -104,17 +105,10 @@ const routes: RouteObject[] = [
           { path: RoutePath.TicketDownload, element: <TicketDownloadPage /> },
         ],
       },
+      { path: RoutePath.MyPageUserEdit, element: <UserEditPage /> },
       {
-        path: RoutePath.MyPage,
-        element: <Layout />,
-        children: [
-          { index: true, element: <MyPage /> },
-          { path: RoutePath.MyPageUserEdit, element: <UserEditPage /> },
-          {
-            path: RoutePath.MyPagePreferenceEdit,
-            element: <PreferenceEditPage />,
-          },
-        ],
+        path: RoutePath.MyPagePreferenceEdit,
+        element: <PreferenceEditPage />,
       },
     ],
   },

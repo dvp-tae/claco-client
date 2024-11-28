@@ -27,15 +27,15 @@ export const LoginPage = () => {
         </div>
 
         <button
-          className="relative flex w-full bg-login items-center justify-center rounded-[8px] py-[0.88rem]"
+          className="flex w-full bg-login items-center justify-center rounded-[8px] py-[0.88rem]"
           onClick={handleLogin}
         >
           <img
             src={KakaoLogo}
             alt="카카오 로고 이미지"
-            className="absolute w-5 h-5 left-[125px]"
+            className="w-5 h-5"
           />
-          <span className="pl-10 body1-regular text-grayscale-20">
+          <span className="pl-2 body1-medium text-grayscale-20">
             카카오로 시작하기
           </span>
         </button>

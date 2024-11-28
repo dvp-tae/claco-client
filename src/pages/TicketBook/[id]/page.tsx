@@ -23,16 +23,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useDeferredLoading } from "@/hooks/utils";
 import { useQueryClient } from "@tanstack/react-query";
 
-// import { ClacoTicket } from "@/components/common/ClacoTicket";
-// import TEST1 from "@/assets/images/poster1.gif";
-// const TEST_TAG = [
-//   { iconUrl: "", tagName: "역동적인" },
-//   { iconUrl: "", tagName: "고전적인" },
-//   { iconUrl: "", tagName: "현대적인" },
-//   { iconUrl: "", tagName: "서정적인" },
-//   { iconUrl: "", tagName: "웅장한" },
-// ];
-
 export const ClacoBookDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -84,10 +74,14 @@ export const ClacoBookDetailPage = () => {
   }, [value]);
 
   const gotoBack = () => {
-    navigate(-1);
+    localStorage.removeItem("prevTicketBookId");
+    localStorage.removeItem("prevClacoBookTitle");
+    navigate("/ticketbook");
   };
 
   const gotoTicketDetail = (tId: number) => {
+    localStorage.setItem("prevTicketBookId", String(id));
+    localStorage.setItem("prevClacoBookTitle", currentClacoBook);
     queryClient.invalidateQueries({ queryKey: ["ticketReviewDetail", tId] });
     navigate(`/ticket/${tId}`);
   };
@@ -191,6 +185,31 @@ export const ClacoBookDetailPage = () => {
     );
   }
 
+  if (!isLoading && clacoTicket?.length === 0) {
+    return (
+      <>
+        <div className="flex flex-col items-center justify-center mt-[100px]">
+          <span className="heading2-bold text-grayscale-80">
+            공연은 즐겁게 관람하셨나요?
+          </span>
+          <div className="relative flex items-center justify-center">
+            <img
+              src={showReview}
+              alt="showReview"
+              className="object-contain mb-[53px]"
+            />
+            <div className="absolute bottom-0 flex text-center">
+              <span className="body2-regular text-grayscale-70 mb-[39px]">
+                티켓북에 공연 감상을 등록하고
+                <br />
+                나만의 티켓을 만들어보세요!
+              </span>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
   return (
     <div className="relative flex flex-col pt-[46px] items-center justify-center px-6">
       <div className="flex justify-between items-center w-full mb-[56px] h-[26px]">
@@ -227,63 +246,34 @@ export const ClacoBookDetailPage = () => {
       ) : null}
 
       <div className="clacobook pb-[185px]">
-        {clacoTicket?.length === 0 ? (
-          <>
-            {/* <ClacoTicket
-              concertPoster={TEST1}
-              watchDate="2024-12-11"
-              concertName="광주시립교향역단, GSO 오티움 콘서트 V: modern"
-              concertTags={TEST_TAG}
-            /> */}
-            <div className="flex flex-col items-center justify-center mt-[100px]">
-              <span className="heading2-bold text-grayscale-80">
-                공연은 즐겁게 관람하셨나요?
-              </span>
-              <div className="relative flex items-center justify-center">
-                <img
-                  src={showReview}
-                  alt="showReview"
-                  className="object-contain mb-[53px]"
-                />
-                <div className="absolute bottom-0 flex text-center">
-                  <span className="body2-regular text-grayscale-70 mb-[39px]">
-                    티켓북에 공연 감상을 등록하고
-                    <br />
-                    나만의 티켓을 만들어보세요!
-                  </span>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <Swiper
-              pagination={true}
-              modules={[Pagination]}
-              spaceBetween={213}
-              onSlideChange={handleSlideChange}
-              onSwiper={(swiper) => {
-                setSelectTicketIndex(swiper.activeIndex);
-              }}
-              className="max-w-[240px] h-[569px] rounded-[5px] flex justify-center items-center"
-            >
-              {clacoTicket &&
-                clacoTicket.map((image, index) => (
-                  <SwiperSlide key={index}>
-                    <div ref={ticketRefs[index]}>
-                      <img
-                        src={image.ticketImage}
-                        alt="클라코 티켓 이미지"
-                        className="w-[240px] h-[530px]"
-                        crossOrigin="anonymous"
-                        onClick={() => gotoTicketDetail(image.id)}
-                      />
-                    </div>
-                  </SwiperSlide>
-                ))}
-            </Swiper>
-          </>
-        )}
+        <>
+          <Swiper
+            pagination={true}
+            modules={[Pagination]}
+            spaceBetween={213}
+            onSlideChange={handleSlideChange}
+            onSwiper={(swiper) => {
+              setSelectTicketIndex(swiper.activeIndex);
+            }}
+            className="max-w-[240px] h-[569px] rounded-[5px] flex justify-center items-center"
+          >
+            {clacoTicket &&
+              clacoTicket.map((image, index) => (
+                <SwiperSlide key={index}>
+                  <div ref={ticketRefs[index]}>
+                    <img
+                      src={image.ticketImage}
+                      alt="클라코 티켓 이미지"
+                      className="w-[240px] h-[530px]"
+                      crossOrigin="anonymous"
+                      onClick={() => gotoTicketDetail(image.id)}
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+          </Swiper>
+        </>
+
         <div
           className="absolute bottom-[57px] right-[26px] w-[70px] h-[70px] bg-primary rounded-full flex justify-center items-center"
           onClick={gotoTicketCreate}

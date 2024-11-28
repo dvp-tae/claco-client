@@ -10,7 +10,7 @@ export const Reviews = ({ data }: ReviewsProps) => {
   return (
     <div className="mt-[21px]">
       <div className="flex justify-center items-center w-full min-h-[51px] headline1-bold mb-[18px]">
-        <span className="w-[400px] text-center">{data.concertName}</span>
+        <span className="w-[350px] text-center">{data.concertName}</span>
       </div>
       <div className="w-[351px] h-[119px] mx-auto px-[15px] py-[17px] rounded-[3.52px] bg-grayscale-20">
         <div className="flex justify-start items-center space-x-[9px]">

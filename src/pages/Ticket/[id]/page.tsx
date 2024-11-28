@@ -54,8 +54,10 @@ export const ClacoTicketDetailPage = () => {
   const navigate = useNavigate();
 
   const gotoBack = () => {
-    // navigate("/ticketbook");
-    navigate(-1);
+    const id = localStorage.getItem("prevTicketBookId");
+    const title = localStorage.getItem("prevClacoBookTitle");
+    navigate(`/ticketbook/${id}?title=${title}`);
+    // navigate(-1);
   };
 
   const gotoTicketReviewEdit = () => {
@@ -249,7 +251,7 @@ export const ClacoTicketDetailPage = () => {
                   )
                 )}
             </div>
-            {/* 
+
             <div className="flex items-center gap-[9px] headline2-bold text-grayscale-70">
               좌석
               {reviewData &&
@@ -282,7 +284,7 @@ export const ClacoTicketDetailPage = () => {
                   )}
                 </>
               )}
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
