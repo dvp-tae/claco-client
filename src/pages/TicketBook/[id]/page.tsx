@@ -211,13 +211,13 @@ export const ClacoBookDetailPage = () => {
                   나만의 티켓을 만들어보세요!
                 </span>
               </div>
-              <div
-                className="absolute bottom-[57px] right-[26px] w-[70px] h-[70px] bg-primary rounded-full flex justify-center items-center"
-                onClick={gotoTicketCreate}
-              >
-                <Plus viewBox="0 0 22 22" width={40} height={40} />
-              </div>
             </div>
+          </div>
+          <div
+            className="absolute bottom-[57px] right-[26px] w-[70px] h-[70px] bg-primary rounded-full flex justify-center items-center"
+            onClick={gotoTicketCreate}
+          >
+            <Plus viewBox="0 0 22 22" width={40} height={40} />
           </div>
         </div>
       </>
