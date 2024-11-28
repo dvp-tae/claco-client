@@ -25,6 +25,7 @@ const usePostLike = () => {
       queryClient.invalidateQueries({
         queryKey: ["search-liked-concert-data"],
       });
+      queryClient.invalidateQueries({ queryKey: ["showDetail"] });
     },
     onError: (error) => {
       console.error(error);
