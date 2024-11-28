@@ -1,6 +1,7 @@
 import { SearchBar } from "@/components/common/Search/Bar";
 import { ShowFilterTab } from "@/components/common/ShowFilterTab";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ReactComponent as Filter } from "@/assets/svgs/filter.svg";
 import { ReactComponent as Refresh } from "@/assets/svgs/refresh.svg";
 import { ReactComponent as BackArrow } from "@/assets/svgs/BackArrow.svg";
@@ -15,27 +16,29 @@ import {
 } from "@/hooks/utils";
 import {
   useGetAutoCompleteSearch,
-  // useGetConcertFilters,
+  useGetConcertFilters,
   useGetConcertList,
   useGetSearch,
 } from "@/hooks/queries";
-import { AutoCompleteSearchCard, TabMenu } from "@/types";
+import { AutoCompleteSearchCard, FilterValue, TabMenu } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import { SearchResult } from "@/components/Browse/SearchResult";
 import { RecentConcertResult } from "@/components/Browse/RecentConcertResult";
-import { useNavigate } from "react-router-dom";
 
 export const BrowsePage = () => {
   const [query, setQuery] = useState<string>("");
   const [activeTab, setActiveTab] = useState<TabMenu>(null);
   const [skipDebounce, setSkipDebounce] = useState<boolean>(false);
   const debouncedQuery = useDebouncedState(query, 500, skipDebounce);
-
-  const navigate = useNavigate();
-  const gotoShowDetail = (id: number) => {
-    navigate(`/show/${id}`);
-  };
+  const [filterValue, setFilterValue] = useState<FilterValue | null>(null);
+  const [isFilterOn, setIsFilterOn] = useState<boolean>(false);
+  const [isSearch, setIsSearch] = useState<boolean>(false);
+  const [isNoSearchResult, setIsNoSearchResult] = useState<boolean>(false);
+  const [isNoFilterResult, setIsNoFilterResult] = useState<boolean>(false);
+  const [showSearchResult, setShowSearchResult] = useState<boolean>(false);
+  const [autoCompleteList, setAutoCompleteList] = useState<
+    AutoCompleteSearchCard[]
+  >([]);
 
   const {
     data: concertData,
@@ -45,10 +48,8 @@ export const BrowsePage = () => {
   } = useGetConcertList({
     genre: activeTab,
     size: 9,
+    // enabled: !isFilterOn,
   });
-
-  // const { data: filterConcertData, fetchNextPage: filterFetchNextPage } =
-  //   useGetConcertFilters();
 
   const { data: autoCompleteData, isLoading: autoCompleteDataLoading } =
     useGetAutoCompleteSearch(debouncedQuery);
@@ -56,18 +57,12 @@ export const BrowsePage = () => {
   const {
     data: searchData,
     fetchNextPage: searchFetchNextPage,
+    isFetchingNextPage: isFetchingSearchNext,
     isLoading: searchLoading,
   } = useGetSearch({
     query: debouncedQuery,
     size: 9,
   });
-
-  const [isSearch, setIsSearch] = useState<boolean>(false);
-  const [isNoSearchResult, setIsNoSearchResult] = useState<boolean>(false);
-  const [showSearchResult, setShowSearchResult] = useState<boolean>(false);
-  const [autoCompleteList, setAutoCompleteList] = useState<
-    AutoCompleteSearchCard[]
-  >([]);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const {
@@ -80,27 +75,58 @@ export const BrowsePage = () => {
     closeFilter,
   } = useShowFilter();
 
+  useEffect(() => {
+    const savedFilter = localStorage.getItem("filterObj");
+    if (savedFilter) {
+      const parsedFilter = JSON.parse(savedFilter);
+      setFilterValue(parsedFilter);
+      setIsFilterOn(true);
+    }
+  }, [showFilter]);
+
+  const {
+    data: filterConcertData,
+    fetchNextPage: filterFetchNextPage,
+    isFetchingNextPage: isFilterFetchingNextPage,
+    isLoading: isFilterSearchLoading,
+  } = useGetConcertFilters({
+    minPrice: filterValue?.minPrice,
+    maxPrice: filterValue?.maxPrice,
+    area: filterValue?.selectedLocation,
+    startDate: filterValue?.startDate,
+    endDate: filterValue?.endDate,
+    categories: filterValue?.categories,
+    size: 9,
+    enabled: isFilterOn,
+  });
+
+  const navigate = useNavigate();
+  const gotoShowDetail = (id: number) => {
+    navigate(`/show/${id}`);
+  };
+
+  const handleRefreshButton = () => {
+    setIsFilterOn(false);
+    setFilterValue(null);
+    setIsNoFilterResult(false);
+    localStorage.removeItem("filterObj");
+    handleRefreshClick();
+  };
+
   const { shouldShowSkeleton } = useDeferredLoading(isLoading);
 
-  const { elementRef } = useRefFocusEffect<HTMLDivElement>(fetchNextPage, [
-    concertData,
-    isSearch,
-  ]);
+  const { elementRef: recentRef } = useRefFocusEffect<HTMLDivElement>(
+    fetchNextPage,
+    [concertData, isSearch, isFilterOn]
+  );
+  const { elementRef: filterRef } = useRefFocusEffect<HTMLDivElement>(
+    filterFetchNextPage,
+    [filterConcertData, isFilterOn]
+  );
   const { elementRef: searchRef } = useRefFocusEffect<HTMLDivElement>(
     searchFetchNextPage,
     [searchData, isSearch]
   );
-
-  useEffect(() => {
-    if (autoCompleteData && !autoCompleteDataLoading) {
-      setAutoCompleteList(autoCompleteData.result);
-    }
-  }, [
-    debouncedQuery,
-    autoCompleteDataLoading,
-    setAutoCompleteList,
-    autoCompleteData,
-  ]);
 
   const handleTabClick = (tab: TabMenu) => {
     setActiveTab(tab);
@@ -134,6 +160,23 @@ export const BrowsePage = () => {
     }
   };
 
+  // useEffect(() => {
+  //   return () => {
+  //     localStorage.removeItem("filterObj");
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    if (autoCompleteData && !autoCompleteDataLoading) {
+      setAutoCompleteList(autoCompleteData.result);
+    }
+  }, [
+    debouncedQuery,
+    autoCompleteDataLoading,
+    setAutoCompleteList,
+    autoCompleteData,
+  ]);
+
   useEffect(() => {
     if (searchData && !searchLoading) {
       if (
@@ -143,7 +186,13 @@ export const BrowsePage = () => {
         setIsNoSearchResult(true);
       }
     }
-  }, [searchData, searchLoading]);
+
+    if (filterConcertData && !isFilterSearchLoading) {
+      if (filterConcertData.pages[0].result.listPageResponse.length === 0) {
+        setIsNoFilterResult(true);
+      }
+    }
+  }, [searchData, searchLoading, filterConcertData, isFilterSearchLoading]);
 
   useEffect(() => {
     if (skipDebounce) {
@@ -155,7 +204,6 @@ export const BrowsePage = () => {
     }
   }, [skipDebounce]);
 
-  // 페이지 스캘레톤 UI 컴포넌트
   if (shouldShowSkeleton) {
     return (
       <div className="px-6 pb-[110px] min-h-screen relative">
@@ -286,7 +334,7 @@ export const BrowsePage = () => {
                 {debouncedQuery.trim().length === 0 ? (
                   <div className="flex gap-2">
                     <Filter onClick={handleFilterClick} />
-                    <Refresh onClick={handleRefreshClick} />
+                    <Refresh onClick={handleRefreshButton} />
                   </div>
                 ) : null}
               </div>
@@ -299,25 +347,45 @@ export const BrowsePage = () => {
               </div>
               {debouncedQuery.trim().length === 0 ? (
                 <>
-                  {concertData && (
+                  {isFilterOn && filterConcertData ? (
                     <RecentConcertResult
-                      concertData={concertData}
-                      isFetchingNextPage={isFetchingNextPage}
+                      concertData={filterConcertData}
+                      isFetchingNextPage={isFilterFetchingNextPage}
                     />
+                  ) : (
+                    concertData && (
+                      <RecentConcertResult
+                        concertData={concertData}
+                        isFetchingNextPage={isFetchingNextPage}
+                      />
+                    )
                   )}
                 </>
               ) : (
-                <>{searchData && <SearchResult searchData={searchData} />}</>
+                <>
+                  {searchData && (
+                    <SearchResult
+                      searchData={searchData}
+                      isFetchingNextPage={isFetchingSearchNext}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
         </div>
-        {isNoSearchResult ? null : (
+        {isNoSearchResult || isNoFilterResult ? null : (
           <>
             {!isSearch ? (
               <div
                 className="h-1"
-                ref={!showSearchResult ? elementRef : searchRef}
+                ref={
+                  showSearchResult
+                    ? searchRef
+                    : isFilterOn
+                      ? filterRef
+                      : recentRef
+                }
               />
             ) : null}
           </>

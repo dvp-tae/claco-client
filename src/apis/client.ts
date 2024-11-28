@@ -19,6 +19,7 @@ client.interceptors.response.use(
     if (res.data.refreshed) {
       const new_accessToken = res.headers["authorization"];
       localStorage.setItem("accessToken", new_accessToken);
+      window.location.replace("/main");
     }
 
     // /* 해당 에러 발생 시 재로그인 하도록 로그인 화면으로 리다이렉트 */
@@ -28,6 +29,7 @@ client.interceptors.response.use(
       res.data.code === "MSE-001" ||
       res.data.code === "ATH-001"
     ) {
+      localStorage.clear();
       window.location.replace("/");
     }
     return res;

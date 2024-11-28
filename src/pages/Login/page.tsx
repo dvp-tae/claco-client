@@ -1,5 +1,6 @@
 import backgroundImage from "../../assets/images/loginbackground.png";
 import { ReactComponent as ClacoMain } from "@/assets/svgs/Claco_Main.svg";
+import KakaoLogo from "@/assets/images/kakao.png";
 
 export const LoginPage = () => {
   // 카카오 인증 서버로 리다이렉트
@@ -24,11 +25,17 @@ export const LoginPage = () => {
             오신 것을 환영해요!
           </span>
         </div>
+
         <button
-          className="flex w-full bg-login items-center justify-center rounded-[0.31rem] py-[0.88rem]"
+          className="relative flex w-full bg-login items-center justify-center rounded-[8px] py-[0.88rem]"
           onClick={handleLogin}
         >
-          <span className="body1-regular text-grayscale-20">
+          <img
+            src={KakaoLogo}
+            alt="카카오 로고 이미지"
+            className="absolute w-5 h-5 left-[125px]"
+          />
+          <span className="pl-10 body1-regular text-grayscale-20">
             카카오로 시작하기
           </span>
         </button>

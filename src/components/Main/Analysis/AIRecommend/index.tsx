@@ -7,6 +7,8 @@ import { useUserStore } from "@/libraries/store/user";
 import { useEffect, useState } from "react";
 import { UserBased } from "@/types";
 import { useGetUserBased } from "@/hooks/queries";
+import { useDeferredLoading } from "@/hooks/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const AIRecommend = () => {
   const [userBased, setUserBased] = useState<UserBased[]>([]);
@@ -19,9 +21,19 @@ export const AIRecommend = () => {
     }
   }, [isLoading, data]);
 
-  if (isLoading) {
+  const { shouldShowSkeleton } = useDeferredLoading(isLoading);
+
+  if (shouldShowSkeleton) {
     //skeleton UI 적용될 부분
-    return <div>로딩 중..</div>;
+    return (
+      <div className="py-[22px] px-6">
+        <div className="flex flex-col gap-2 mb-[23px]">
+          <Skeleton className="w-[197px] h-[25px]" />
+          <Skeleton className="w-[210px] h-[25px]" />
+        </div>
+        <Skeleton className="w-full h-[443px]" />
+      </div>
+    );
   }
 
   return (

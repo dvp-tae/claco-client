@@ -81,7 +81,7 @@ export type GetSearchProps = {
 export type GetConcertFiltersProps = {
   minPrice?: number;
   maxPrice?: number;
-  area?: string;
+  area?: string[];
   startDate?: string;
   endDate?: string;
   page: number;
@@ -108,4 +108,13 @@ export type GetLikedConcertListResponse = {
   message: string;
   result: GetLikedConcertListResult[];
   refreshed: boolean;
+};
+
+export type FilterValue = {
+  minPrice: number;
+  maxPrice: number;
+  selectedLocation: string[];
+  startDate: string;
+  endDate: string;
+  categories: string[];
 };

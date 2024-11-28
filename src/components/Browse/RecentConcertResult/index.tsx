@@ -17,19 +17,26 @@ export const RecentConcertResult = ({
       </span>
       <div className="flex flex-col gap-[29px] mt-[12px]">
         {concertData &&
-          concertData.pages.flatMap((page, pageIndex) =>
-            page.result.listPageResponse.map((show, index) => (
-              <ShowSummaryCard
-                key={`${pageIndex}-${show.id}-${index}`}
-                data={show}
-              />
-            ))
-          )}
-        {/* 추가 데이터 로드 */}
-        {isFetchingNextPage && (
-          <div className="mt-4 text-center">
-            <span>로딩 중...</span>
-          </div>
+        concertData.pages[0].result.listPageResponse.length === 0 ? (
+          <div>검색결과없음</div>
+        ) : (
+          <>
+            {concertData &&
+              concertData.pages.flatMap((page, pageIndex) =>
+                page.result.listPageResponse.map((show, index) => (
+                  <ShowSummaryCard
+                    key={`${pageIndex}-${show.id}-${index}`}
+                    data={show}
+                  />
+                ))
+              )}
+            {/* 추가 데이터 로드 */}
+            {isFetchingNextPage && (
+              <div className="mt-4 text-center">
+                <span>로딩 중...</span>
+              </div>
+            )}
+          </>
         )}
       </div>
     </>

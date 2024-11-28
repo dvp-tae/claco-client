@@ -1,16 +1,16 @@
 {
   "assets": [
-    { "h": 339, "id": "0", "p": "MagnifierBackground.png", "u": "/src/assets/images/", "w": 344, "e": 0 },
-    { "h": 170, "id": "1", "p": "delicate.png", "u": "/src/assets/images/Genre/", "w": 170, "e": 0 },
-    { "h": 170, "id": "2", "p": "dynamic.png", "u": "/src/assets/images/Genre/", "w": 170, "e": 0 },
-    { "h": 170, "id": "3", "p": "familiar.png", "u": "/src/assets/images/Genre/", "w": 168, "e": 0 },
-    { "h": 170, "id": "4", "p": "grand.png", "u": "/src/assets/images/Genre/", "w": 170, "e": 0 },
-    { "h": 170, "id": "5", "p": "lyrical.png", "u": "/src/assets/images/Genre/", "w": 170, "e": 0 },
-    { "h": 170, "id": "6", "p": "modern.png", "u": "/src/assets/images/Genre/", "w": 170, "e": 0 },
-    { "h": 170, "id": "7", "p": "novel.png", "u": "/src/assets/images/Genre/", "w": 168, "e": 0 },
-    { "h": 170, "id": "8", "p": "romantic.png", "u": "/src/assets/images/Genre/", "w": 170, "e": 0 },
-    { "h": 170, "id": "9", "p": "tragic.png", "u": "/src/assets/images/Genre/", "w": 170, "e": 0 },
-    { "h": 170, "id": "10", "p": "classical.png", "u": "/src/assets/images/Genre/", "w": 170, "e": 0 },
+    { "h": 339, "id": "0", "p": "MagnifierBackground.png", "u": "/dist/assets/images/", "w": 344, "e": 0 },
+    { "h": 170, "id": "1", "p": "delicate.png", "u": "/dist/assets/images/Genre/", "w": 170, "e": 0 },
+    { "h": 170, "id": "2", "p": "dynamic.png", "u": "/dist/assets/images/Genre/", "w": 170, "e": 0 },
+    { "h": 170, "id": "3", "p": "familiar.png", "u": "/dist/assets/images/Genre/", "w": 168, "e": 0 },
+    { "h": 170, "id": "4", "p": "grand.png", "u": "/dist/assets/images/Genre/", "w": 170, "e": 0 },
+    { "h": 170, "id": "5", "p": "lyrical.png", "u": "/dist/assets/images/Genre/", "w": 170, "e": 0 },
+    { "h": 170, "id": "6", "p": "modern.png", "u": "/dist/assets/images/Genre/", "w": 170, "e": 0 },
+    { "h": 170, "id": "7", "p": "novel.png", "u": "/dist/assets/images/Genre/", "w": 168, "e": 0 },
+    { "h": 170, "id": "8", "p": "romantic.png", "u": "/dist/assets/images/Genre/", "w": 170, "e": 0 },
+    { "h": 170, "id": "9", "p": "tragic.png", "u": "/dist/assets/images/Genre/", "w": 170, "e": 0 },
+    { "h": 170, "id": "10", "p": "classical.png", "u": "/dist/assets/images/Genre/", "w": 170, "e": 0 },
     {
       "id": "17",
       "layers": [

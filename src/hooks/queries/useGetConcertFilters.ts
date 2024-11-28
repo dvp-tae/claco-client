@@ -33,6 +33,9 @@ const getConcertFilters = async ({
         size,
         categories,
       },
+      paramsSerializer: {
+        indexes: null,
+      },
     }
   );
   return response.data;
@@ -46,6 +49,7 @@ const useGetConcertFilters = ({
   endDate,
   size = 9,
   categories,
+  enabled = false,
 }: Omit<GetConcertFiltersProps, "page"> & {
   enabled?: boolean;
 }): UseInfiniteQueryResult<GetConcertInfiniteResponse, AxiosError> => {
@@ -72,10 +76,12 @@ const useGetConcertFilters = ({
       }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      return lastPage.result.currentPage !== allPages[0].result.totalPage
+      return lastPage.result.currentPage !== allPages[0].result.totalPage ||
+        lastPage.result.totalPage !== 0
         ? lastPage.result.currentPage + 1
         : undefined;
     },
+    enabled,
   });
 };
 

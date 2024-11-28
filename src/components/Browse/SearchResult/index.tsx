@@ -4,9 +4,13 @@ import { ShowSummaryCard } from "@/components/common/ShowSummaryCard";
 
 export type SearchReultProps = {
   searchData: GetConcertInfiniteResponse;
+  isFetchingNextPage: boolean;
 };
 
-export const SearchResult = ({ searchData }: SearchReultProps) => {
+export const SearchResult = ({
+  searchData,
+  isFetchingNextPage,
+}: SearchReultProps) => {
   return (
     // 검색 이후 로직
     <>
@@ -42,6 +46,12 @@ export const SearchResult = ({ searchData }: SearchReultProps) => {
                   <ShowSummaryCard key={show.id} data={show} />
                 ))
               )}
+            {/* 추가 데이터 로드 */}
+            {isFetchingNextPage && (
+              <div className="mt-4 text-center">
+                <span>로딩 중...</span>
+              </div>
+            )}
           </>
         )}
       </div>

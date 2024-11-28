@@ -54,7 +54,8 @@ export const ClacoTicketDetailPage = () => {
   const navigate = useNavigate();
 
   const gotoBack = () => {
-    navigate("/ticketbook");
+    // navigate("/ticketbook");
+    navigate(-1);
   };
 
   const gotoTicketReviewEdit = () => {
@@ -82,7 +83,8 @@ export const ClacoTicketDetailPage = () => {
     deleteClacoTicket(ticketId, {
       onSuccess: () => {
         setIsModalOpen(false);
-        navigate("/ticketbook");
+        // navigate("/ticketbook");
+        navigate(-1);
       },
       onError: (error) => {
         console.error(error);
@@ -129,7 +131,7 @@ export const ClacoTicketDetailPage = () => {
       />
       <div className="flex justify-between items-center w-full mb-[27px] h-[26px]">
         <BackArrow onClick={gotoBack} />
-        <Trash onClick={() => setIsModalOpen(true)} />
+        {reviewData?.editor && <Trash onClick={() => setIsModalOpen(true)} />}
       </div>
       <div className="flex-col justify-start w-full space-y-2 mb-[54px]">
         {reviewData && (
@@ -164,13 +166,15 @@ export const ClacoTicketDetailPage = () => {
       <div className="flex flex-col w-full">
         <div className="flex items-center justify-start gap-[5px] mb-5">
           <div className="headline2-bold">나의 공연 감상</div>
-          <Edit
-            viewBox="0 0 18 18"
-            width={14}
-            height={14}
-            className="text-grayscale-60"
-            onClick={gotoTicketReviewEdit}
-          />
+          {reviewData?.editor && (
+            <Edit
+              viewBox="0 0 18 18"
+              width={14}
+              height={14}
+              className="text-grayscale-60"
+              onClick={gotoTicketReviewEdit}
+            />
+          )}
         </div>
         <div className="flex justify-between mb-5">
           <div className="flex items-center gap-[3px] text-secondary2-100/100">
@@ -245,17 +249,21 @@ export const ClacoTicketDetailPage = () => {
                   )
                 )}
             </div>
-
+            {/* 
             <div className="flex items-center gap-[9px] headline2-bold text-grayscale-70">
               좌석
               {reviewData &&
               JSON.parse(reviewData.watchSit).trim().length === 0 ? (
-                <Edit
-                  viewBox="0 0 18 18"
-                  width={14}
-                  height={14}
-                  onClick={() => setIsEditModalOpen(true)}
-                />
+                <>
+                  {reviewData?.editor && (
+                    <Edit
+                      viewBox="0 0 18 18"
+                      width={14}
+                      height={14}
+                      onClick={() => setIsEditModalOpen(true)}
+                    />
+                  )}
+                </>
               ) : null}
             </div>
             <div className="flex items-center body1-regular text-grayscale-90">
@@ -263,16 +271,18 @@ export const ClacoTicketDetailPage = () => {
               JSON.parse(reviewData.watchSit).trim().length === 0 ? null : (
                 <>
                   {reviewData && JSON.parse(reviewData.watchSit)}
-                  <Edit
-                    viewBox="0 0 18 18"
-                    width={14}
-                    height={14}
-                    onClick={() => setIsEditModalOpen(true)}
-                    className="ml-2"
-                  />
+                  {reviewData?.editor && (
+                    <Edit
+                      viewBox="0 0 18 18"
+                      width={14}
+                      height={14}
+                      onClick={() => setIsEditModalOpen(true)}
+                      className="ml-2"
+                    />
+                  )}
                 </>
               )}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

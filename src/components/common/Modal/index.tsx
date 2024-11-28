@@ -19,13 +19,13 @@ export const Modal = ({
         <div className="w-[302px] flex items-center justify-between gap-[10px]">
           <button
             onClick={onNegativeButtonClick}
-            className="min-w-36 rounded-[5px] bg-grayscale-30 px-auto py-[14px] body1-medium text-grayscale-70 text-center"
+            className="w-[146px] rounded-[5px] bg-grayscale-30 px-auto py-[14px] body1-medium text-grayscale-70 text-center"
           >
             {negativeButtonText}
           </button>
           <button
             onClick={onPositiveButtonClick}
-            className={`min-w-36 rounded-[5px] bg-primary px-auto py-[14px] body1-medium text-white text-center ${disabled ? "opacity-30" : ""}`}
+            className={`w-[146px] rounded-[5px] bg-primary px-auto py-[14px] body1-medium text-white text-center ${disabled ? "opacity-30" : ""}`}
             disabled={disabled}
           >
             {positiveButtonText}

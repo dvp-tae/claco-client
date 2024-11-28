@@ -12,6 +12,8 @@ import { PlaceCategory, TagCategory, TicketReviewRequest } from "@/types";
 import { usePostTicketReview } from "@/hooks/mutation";
 import getTagCategories from "@/apis/useGetTagCategories";
 import getPlaceCategories from "@/apis/useGetPlaceCategories";
+import { useDeferredLoading } from "@/hooks/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const TicketReviewPage = () => {
   const navigate = useNavigate();
@@ -34,6 +36,8 @@ export const TicketReviewPage = () => {
   const [tagCategories, setTagCategories] = useState<TagCategory[]>([]);
   const [placeCategories, setPlaceCategories] = useState<PlaceCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const { shouldShowSkeleton } = useDeferredLoading(isLoading);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,14 +102,14 @@ export const TicketReviewPage = () => {
       .filter(Boolean)
       .map((selectedTag) =>
         placeCategories.find(
-          (category) => category.categoryName === selectedTag
-        )
+          (category) => category.categoryName === selectedTag,
+        ),
       )
       .filter((category): category is PlaceCategory => category !== undefined);
 
     const selectedTags: TagCategory[] = selectedKeywordTags
       .map((selectedTag) =>
-        tagCategories?.find((category) => category.tagName === selectedTag)
+        tagCategories?.find((category) => category.tagName === selectedTag),
       )
       .filter((category): category is TagCategory => category !== undefined);
     const request: TicketReviewRequest = {
@@ -148,10 +152,31 @@ export const TicketReviewPage = () => {
     reviewText,
   ]);
 
-  if (isLoading) {
-    return <div>로딩중</div>;
+  if (shouldShowSkeleton) {
+    return (
+      <div className="relative flex flex-col min-h-screen px-[24px] pt-[46px] pb-[60px]">
+        <div className="flex flex-col gap-[33px] mb-[37px]">
+          <div className="relative flex items-center justify-center">
+            <BackArrow
+              width="9"
+              height="18"
+              viewBox="0 0 11 20"
+              className="absolute left-0"
+              onClick={handleBackClick}
+            />
+            <span className="headline2-bold text-grayscale-80">티켓 등록</span>
+          </div>
+          <Progress value={80} />
+        </div>
+        <Skeleton className="w-[140px] h-[26px] mb-[29px]" />
+        <Skeleton className="w-[140px] h-[26px] mb-[29px]" />
+        <Skeleton className="w-[292px] h-[158px] mb-[32px]" />
+        <Skeleton className="w-[218px] h-[81px] mb-[40px]" />
+        <Skeleton className="w-[234px] h-[126px] mb-[40px]" />
+        <Skeleton className="w-[254px] h-[81px]" />
+      </div>
+    );
   }
-
   return (
     <div className="flex flex-col min-h-screen px-[24px] pt-[46px] pb-[60px]">
       <div className="flex flex-col gap-[33px]">

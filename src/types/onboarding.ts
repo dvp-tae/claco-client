@@ -6,13 +6,13 @@ export type GenderProps = {
 export type AgeProps = {
   selectedAge: number | null;
   onAgeSelect: (age: number) => void;
-}
+};
 
 export type NicknameProps = {
   isChecked: boolean;
   setIsChecked: (value: boolean) => void;
   setNickname: (value: string) => void;
-}
+};
 
 export type PriceProps = {
   minPrice: number;
@@ -23,7 +23,9 @@ export type PriceProps = {
 
 export type LocationProps = {
   selectedLocation: string[];
-  onLocationClick: (location: string) => void;
+  onLocationFilterClick?: (value: string[], label: string) => void;
+  onLocationClick?: (label: string) => void;
+  isFilter?: boolean;
 };
 
 export type ConceptProps = {

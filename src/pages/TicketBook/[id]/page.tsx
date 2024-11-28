@@ -2,13 +2,11 @@ import { ReactComponent as BackArrow } from "@/assets/svgs/BackArrow.svg";
 import { ReactComponent as DownLoad } from "@/assets/svgs/DownLoadBox.svg";
 import { ReactComponent as DotsThree } from "@/assets/svgs/dotsthree.svg";
 import { ReactComponent as Plus } from "@/assets/svgs/plus.svg";
-
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
-
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 import { createRef, useEffect, useState } from "react";
@@ -23,17 +21,29 @@ import showReview from "@/assets/images/showReview.png";
 import { useDeleteClacoTicket, usePutMoveClacoTicket } from "@/hooks/mutation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDeferredLoading } from "@/hooks/utils";
+import { useQueryClient } from "@tanstack/react-query";
+
+// import { ClacoTicket } from "@/components/common/ClacoTicket";
+// import TEST1 from "@/assets/images/poster1.gif";
+// const TEST_TAG = [
+//   { iconUrl: "", tagName: "역동적인" },
+//   { iconUrl: "", tagName: "고전적인" },
+//   { iconUrl: "", tagName: "현대적인" },
+//   { iconUrl: "", tagName: "서정적인" },
+//   { iconUrl: "", tagName: "웅장한" },
+// ];
 
 export const ClacoBookDetailPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const queryParams = new URLSearchParams(location.search);
   const value = queryParams.get("title");
   const { id } = useParams();
-  const [clacoTicket, setClacoTicket] = useState<ClacoTicketListResult[]>();
   const [ticketRefs, setTicketRefs] = useState<
     React.RefObject<HTMLDivElement>[]
   >([]);
+  const [clacoTicket, setClacoTicket] = useState<ClacoTicketListResult[]>();
   const [currentClacoBook, setCurrentClacoBook] = useState<string>("");
   const [selectTicketIndex, setSelectTicketIndex] = useState<number>(0);
   const [selectClacoBook, setSelectClacoBook] = useState<ClacoBookList>({
@@ -78,6 +88,7 @@ export const ClacoBookDetailPage = () => {
   };
 
   const gotoTicketDetail = (tId: number) => {
+    queryClient.invalidateQueries({ queryKey: ["ticketReviewDetail", tId] });
     navigate(`/ticket/${tId}`);
   };
 
@@ -190,8 +201,12 @@ export const ClacoBookDetailPage = () => {
           {currentClacoBook}
         </span>
         <div className="flex space-x-[21px] w-[56px]">
-          <DownLoad onClick={() => handleModalOpen("download")} />
-          <DotsThree onClick={() => setIsSetting(true)} />
+          {clacoTicket?.length !== 0 && (
+            <>
+              <DownLoad onClick={() => handleModalOpen("download")} />
+              <DotsThree onClick={() => setIsSetting(true)} />
+            </>
+          )}
         </div>
       </div>
 
@@ -214,6 +229,12 @@ export const ClacoBookDetailPage = () => {
       <div className="clacobook pb-[185px]">
         {clacoTicket?.length === 0 ? (
           <>
+            {/* <ClacoTicket
+              concertPoster={TEST1}
+              watchDate="2024-12-11"
+              concertName="광주시립교향역단, GSO 오티움 콘서트 V: modern"
+              concertTags={TEST_TAG}
+            /> */}
             <div className="flex flex-col items-center justify-center mt-[100px]">
               <span className="heading2-bold text-grayscale-80">
                 공연은 즐겁게 관람하셨나요?

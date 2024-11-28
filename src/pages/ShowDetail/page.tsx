@@ -1,14 +1,18 @@
 import AudienceReviews from "@/components/ShowDetail/AudienceReviews";
+import { ReactComponent as ClacoMain } from "@/assets/svgs/Claco_Main.svg";
+import { ReactComponent as BackArrow } from "@/assets/svgs/BackArrow.svg";
 import RelatedShowsRecommend from "@/components/ShowDetail/RelatedShowRecommend";
 import ShowEssentials from "@/components/ShowDetail/ShowInformation/ShowEssentials";
 import ShowOverview from "@/components/ShowDetail/ShowInformation/ShowOverview";
 import ShowPoster from "@/components/ShowDetail/ShowInformation/ShowPoster";
+import { Skeleton } from "@/components/ui/skeleton";
 import useGetShowDetail from "@/hooks/queries/useGetShowDetail";
 import {
   extractDateRange,
   extractPricesWithSeats,
   extractSchedule,
   timeToMinutes,
+  useDeferredLoading,
 } from "@/hooks/utils";
 import { useRef, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -108,6 +112,7 @@ export const ShowDetailPage = () => {
   const { seats, prices, minPrice, maxPrice } = extractPricesWithSeats(
     showDetail?.pcseguidance || "",
   );
+  const { shouldShowSkeleton } = useDeferredLoading(isLoading);
 
   const displayedPrice = (
     minPrice: number | string | null,
@@ -124,10 +129,24 @@ export const ShowDetailPage = () => {
     return "가격 정보 없음";
   };
 
-  if (isLoading) {
-    return <div>로딩중</div>;
+  if (shouldShowSkeleton) {
+    return (
+      <div className="relative flex flex-col min-h-screen px-[24px] pt-[61px] pb-[60px]">
+        <ClacoMain className="mb-[38px]" />
+        <BackArrow
+          width="8"
+          height="15"
+          viewBox="0 0 11 20"
+          className="mb-[37px] cursor-pointer"
+        />
+        <Skeleton className="w-[100px] h-[26px] mb-[11px]" />
+        <Skeleton className="w-[299px] h-[30px] mb-[28px]" />
+        <Skeleton className="w-full h-[173px] mb-[45px]" />
+        <Skeleton className="w-full h-[295px] mb-[66px]" />
+        <Skeleton className="w-full h-[40px] mb-[40px]" />
+      </div>
+    );
   }
-
   return (
     <div className="pt-[73px] pb-[40px]">
       <ShowOverview

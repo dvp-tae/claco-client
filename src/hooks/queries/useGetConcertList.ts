@@ -28,10 +28,10 @@ const getConcertsList = async ({
 const useGetConcertsList = ({
   genre,
   size = 9,
-}: Omit<GetConcertListProps, "page">): UseInfiniteQueryResult<
-  GetConcertInfiniteResponse,
-  AxiosError
-> => {
+  enabled = true,
+}: Omit<GetConcertListProps, "page"> & {
+  enabled?: boolean;
+}): UseInfiniteQueryResult<GetConcertInfiniteResponse, AxiosError> => {
   return useInfiniteQuery({
     queryKey: ["concert-data", genre],
     queryFn: ({ pageParam = 1 }) =>
@@ -42,6 +42,7 @@ const useGetConcertsList = ({
         ? lastPage.result.currentPage + 1
         : undefined;
     },
+    enabled,
   });
 };
 

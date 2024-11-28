@@ -31,7 +31,7 @@ export const SelectLocationPage = () => {
   };
 
   return (
-    <div className="w-full h-screen overflow-y-auto bg-background-dark flex flex-col">
+    <div className="flex flex-col w-full h-screen overflow-y-auto bg-background-dark">
       <div className="flex flex-col flex-grow w-full h-auto px-[24px] pt-[4.75rem] pb-[4.56rem] gap-[0.5rem]">
         <div className="flex flex-col gap-[2.44rem]">
           <div className="flex-col">

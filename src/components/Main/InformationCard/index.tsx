@@ -1,7 +1,7 @@
 import { ReactComponent as Location_Gray } from "@/assets/svgs/Location_gray.svg";
 import { ReactComponent as Calendar } from "@/assets/svgs/Calendar.svg";
 import { InfoCardProps } from "@/types/poster";
-import { extractDateRange } from "@/hooks/utils";
+import { formatDateYYYYMMDD } from "@/hooks/utils";
 import { CategoryTag } from "@/components/common/CategoryTag";
 import { useNavigate } from "react-router-dom";
 
@@ -14,7 +14,8 @@ export const VerticalInfoCard = ({
   dateTo,
   genrenm,
 }: InfoCardProps) => {
-  const _date = extractDateRange(dateFrom, dateTo);
+  const _dateFrom = formatDateYYYYMMDD(dateFrom);
+  const _dateTo = formatDateYYYYMMDD(dateTo);
   const navigate = useNavigate();
   const gotoShowDetail = () => {
     navigate(`/show/${id}`);
@@ -38,7 +39,15 @@ export const VerticalInfoCard = ({
           </div>
           <div className="flex items-center">
             <Calendar />
-            <span>{_date}</span>
+            <span className="truncate max-w-[151px]">
+              {_dateFrom === _dateTo ? (
+                <>{_dateFrom}</>
+              ) : (
+                <>
+                  {_dateFrom}~{_dateTo}
+                </>
+              )}
+            </span>
           </div>
         </div>
       </div>
@@ -55,7 +64,8 @@ export const HorizontalInfoCard = ({
   dateTo,
   genrenm,
 }: InfoCardProps) => {
-  const _date = extractDateRange(dateFrom, dateTo);
+  const _dateFrom = formatDateYYYYMMDD(dateFrom);
+  const _dateTo = formatDateYYYYMMDD(dateTo);
 
   const navigate = useNavigate();
   const gotoShowDetail = () => {
@@ -83,7 +93,15 @@ export const HorizontalInfoCard = ({
             </div>
             <div className="flex items-center">
               <Calendar />
-              {_date}
+              <span className="truncate max-w-[155px]">
+                {_dateFrom === _dateTo ? (
+                  <>{_dateFrom}</>
+                ) : (
+                  <>
+                    {_dateFrom}~{_dateTo}
+                  </>
+                )}
+              </span>
             </div>
           </div>
         </div>
